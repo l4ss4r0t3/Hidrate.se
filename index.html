@@ -1,18 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 
 <head>
 
 <meta charset="UTF-8">
-<link rel="stylesheet" href="style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hidrate.se | Sua garrafa de água digital.</title>
+<meta name="description" content="Hidrate.se: Use sua garrafa de água digital e controle seu consumo diário de água de forma simples e visual. Alcance sua meta de hidratação e cuide da sua saúde com facilidade.">
+
+<link rel="stylesheet" href="style.css">
+
+<meta property="og:title" content="Hidrate.se | Sua garrafa de água digital.">
+<meta property="og:description" content="Acompanhe sua meta de hidratação diária com uma garrafa interativa e visual.">
+<meta property="og:image" content="https://hcontrol.rf.gd/favicon192.png">
+<meta property="og:url" content="https://hcontrol.rf.gd/">
 
 <link rel="icon" type="image/png" sizes="32x32" href="favicon32.png">
 <link rel="icon" type="image/png" sizes="48x48" href="favicon48.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon192.png">
 <link rel="apple-touch-icon" href="favicon180.png">
-
-<title>Hydration Control</title>
 
 </head>
 
@@ -27,10 +34,7 @@
    viewBox="0 0 6 12"
    version="1.1"
    id="svg1"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs1" />	 
+   xmlns="http://www.w3.org/2000/svg"> 
   <rect
      style="fill:#00ffff;stroke-width:0"
      id="agua-nivel"
@@ -78,14 +82,17 @@
     <button type="button" id="btn-zerar">ESVAZIAR GARRAFA</button>
 	
 	<div class="quantidades">
+	
 	<div class="unidade">
-	<input type="number" id="meta-input" value="2000" placeholder="META">
-    <span class="ml">(ml)</span>
+	<label for="meta-input">Sua Meta Diária (ml):</label>
+	<input type="number" id="meta-input" value="2000">
 	</div>
+	
 	<div class="unidade">
-	<input type="number" id="ml-input" placeholder="ÁGUA INGERIDA">
-	<span class="ml">(ml)</span>
+	<label for="ml-input">Quantidade de água ingerida (ml):</label>
+	<input type="number" id="ml-input">
 	</div>
+	
 	</div>
 	
     <button type="button" id="btn-beber">BEBER</button>

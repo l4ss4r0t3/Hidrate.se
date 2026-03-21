@@ -15,7 +15,7 @@ html, body {
 
 .garrafa {
 	width: 100%;
-	height: 85%;
+	height: 80%;
 	
 	display: flex;
     justify-content: center;
@@ -30,7 +30,7 @@ html, body {
 
 .informações {
 	width: 100%;
-	height: 15%;
+	height: 20%;
 	margin: auto;
 	
 	display: flex;
@@ -58,7 +58,7 @@ html, body {
 
 .informações input {
 	width: 100%;
-	height: 100%;
+	height: 40%;
 	
 	background-color: white;
 }
@@ -73,17 +73,6 @@ html, body {
 
 #meta-input, #ml-input {
     text-align: center;
-	font-size: min(1vw + 1vh, 16px);
-}
-
-.ml {
-    position: absolute;
-    right: 1%;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #888;
-    pointer-events: none; /* Faz o clique passar pelo texto e atingir o input */
-	
 	font-size: min(1vw + 1vh, 16px);
 }
 
