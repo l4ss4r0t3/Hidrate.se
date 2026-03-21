@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon192.png">
+<link rel="apple-touch-icon" href="favicon180.png">
+
+<title>Hydration Control</title>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="garrafa">
+<svg
+   width="6mm"
+   height="12mm"
+   viewBox="0 0 6 12"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />	 
+  <rect
+     style="fill:#00ffff;stroke-width:0"
+     id="agua-nivel"
+     width="4"
+     height="10"
+     x="1"
+     y="1"
+     ry="0" />
+  <rect
+     style="fill:black;stroke-width:0"
+     id="rect3"
+     width="1"
+     height="10"
+     x="0"
+     y="1" />
+  <rect
+     style="fill:black;stroke-width:0"
+     id="rect4"
+     width="1"
+     height="10"
+     x="5"
+     y="1" />
+  <rect
+     style="fill:black;stroke-width:0"
+     id="rect5"
+     width="4"
+     height="1"
+     x="1"
+     y="11" />
+  <rect
+     style="fill:black;stroke-width:0"
+     id="rect6"
+     width="4"
+     height="1"
+     x="1"
+     y="0" />
+	 
+  <text id="texto-agua" x="3" y="10.5" font-size="0.5" text-anchor="middle" fill="black"></text>
+  <text id="texto-restante" x="3" y="2" font-size="0.5" text-anchor="middle" fill="black"></text>
+
+</svg>
+</div>
+
+<div class="informações">
+    <button type="button" id="btn-zerar">ESVAZIAR GARRAFA</button>
+	
+	<div class="quantidades">
+	<div class="unidade">
+	<input type="number" id="meta-input" value="2000" placeholder="META">
+    <span class="ml">(ml)</span>
+	</div>
+	<div class="unidade">
+	<input type="number" id="ml-input" placeholder="ÁGUA INGERIDA">
+	<span class="ml">(ml)</span>
+	</div>
+	</div>
+	
+    <button type="button" id="btn-beber">BEBER</button>
+</div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+
+</html>
