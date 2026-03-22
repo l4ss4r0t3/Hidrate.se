@@ -9,7 +9,7 @@ const elementoAgua = document.getElementById('agua-nivel');
 
 // 1. Carrega o progresso E a meta salva (ou usa 2000 como padrão)
 let totalIngerido = parseFloat(localStorage.getItem('aguaConsumida')) || 0;
-let metaDiaria = parseFloat(localStorage.getItem('metaSalva')) || 2000;
+let metaDiaria = parseFloat(localStorage.getItem('metaSalva')) || 0;
 
 // Inicializa o valor do input da meta na tela
 if(inputMeta) inputMeta.value = metaDiaria;
@@ -74,7 +74,7 @@ function atualizarVisual() {
         const espacoVazio = 11 - novaAltura;
         // Posiciona no centro do espaço branco
         txtRestante.setAttribute('y', 1 + (novaAltura < 10 ? (espacoVazio - 1) / 2 : -5)); 
-        // Esconde o "restante" se a garrafa estiver cheia
-        txtRestante.style.display = restante > 0 ? "block" : "none";
+        // Esconde o "restante" se sobrar menos de 5% de espaço no topo
+        txtRestante.style.display = (porcentagem < 0.95) ? "block" : "none";
     }
 }

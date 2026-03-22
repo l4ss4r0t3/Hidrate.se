@@ -2,14 +2,15 @@
 
 > **Sua garrafa de água digital para controle de hidratação diária.**
 
-O **Hidrate.se** é um web app focado em ajudar usuários a monitorarem seu consumo de água de forma visual e intuitiva. Através de uma interface interativa com uma garrafa em SVG, o sistema calcula quanto falta para atingir a meta diária personalizada.
+O **Hidrate.se** é um web app focado em ajudar usuários a monitorarem seu consumo de água de forma visual e intuitiva. Através de uma interface interativa com uma garrafa de água digital (feita em SVG), o sistema calcula quanto falta para atingir a meta diária personalizada.
 
 ## 🚀 Funcionalidades
 
 - [x] **Meta Personalizada:** Defina sua meta diária em ml.
-- [x] **Garrafa Interativa:** Visualização em tempo real do nível da água via SVG.
+- [x] **Garrafa Interativa:** Visualização em tempo real do nível da água em uma garrafa de água digital (feita com SVG).
 - [x] **Cálculo Automático:** Sistema que subtrai o consumo da meta restante.
 - [x] **Responsividade:** Design adaptado para dispositivos móveis e desktop.
+- [x] **Persistência Local:** Salva a água ingerida localmente até que o usuário "esvazie" a garrafa.
 
 ## 🛠️ Tecnologias Utilizadas
 
