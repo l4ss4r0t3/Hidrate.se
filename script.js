@@ -95,7 +95,7 @@ btnZerar.addEventListener('click', () => {
 //     texto-ingerido → numerador (ex: 1500ml)
 //     linha-fracao   → linha separadora (elemento <line> no SVG)
 //     texto-meta     → denominador (ex: 2000ml)
-// - quando a meta é batida, exibe "Meta" / "Batida! 🎉"
+// - quando a meta é batida, exibe "Meta" / "Batida! 🎉" e esconde a linha
 // =============================================================
 function atualizarVisual() {
     const porcentagem = Math.min(Math.max(totalIngerido / metaDiaria, 0), 1); // Entre 0 e 1
@@ -110,20 +110,21 @@ function atualizarVisual() {
     // Atualiza o rótulo em formato de fração no interior da garrafa
     const txtIngerido = document.getElementById('texto-ingerido'); // Numerador
     const txtMeta = document.getElementById('texto-meta');         // Denominador
+    const linhaFracao = document.getElementById('linha-fracao');   // Linha separadora
 
     if (txtIngerido && txtMeta) {
-    const linhaFracao = document.getElementById('linha-fracao'); // Linha separadora
-
-    if (porcentagem >= 1) {
-        txtIngerido.textContent = 'Meta';
-        txtMeta.textContent = 'Batida! 🎉';
-        if (linhaFracao) linhaFracao.style.display = 'none'; // Esconde a linha
-    } else {
-        txtIngerido.textContent = `${totalIngerido}ml`;
-        txtMeta.textContent = `${metaDiaria}ml`;
-        if (linhaFracao) linhaFracao.style.display = 'block'; // Garante que a linha aparece
+        if (porcentagem >= 1) {
+            // Meta atingida: exibe mensagem e esconde a linha
+            txtIngerido.textContent = 'Meta';
+            txtMeta.textContent = 'Batida! 🎉';
+            if (linhaFracao) linhaFracao.style.display = 'none';
+        } else {
+            // Exibe fração: total ingerido sobre a meta diária
+            txtIngerido.textContent = `${totalIngerido}ml`;
+            txtMeta.textContent = `${metaDiaria}ml`;
+            if (linhaFracao) linhaFracao.style.display = 'block';
+        }
     }
-}
 }
 
 // =============================================================
@@ -134,8 +135,11 @@ function atualizarVisual() {
 const dropbtn = document.querySelector('.dropbtn');
 const menu = document.querySelector('.dropdown-content');
 
-// Abre ou fecha o menu ao clicar no botão hambúrguer
-dropbtn.addEventListener('click', () => {
+// Abre ou fecha o menu ao clicar no botão hambúrguer.
+// e.stopPropagation() impede que o clique propague para o document
+// e acione o listener de fechamento logo em seguida — bug crítico no mobile.
+dropbtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     const estaAberto = menu.style.display === 'block';
     menu.style.display = estaAberto ? 'none' : 'block';
 });
