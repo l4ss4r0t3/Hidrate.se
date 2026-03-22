@@ -78,3 +78,52 @@ function atualizarVisual() {
         txtRestante.style.display = (porcentagem < 0.95) ? "block" : "none";
     }
 }
+
+function fecharMenuCelular() {
+    const menu = document.querySelector('.dropdown-content');
+    if (menu) {
+        // 1. Adiciona a classe que força o "display: none"
+        menu.classList.add('hidden');
+
+        // 2. Remove a classe após um tempo curto (300ms)
+        // Isso permite que o menu possa ser aberto novamente no próximo toque
+        setTimeout(() => {
+            menu.classList.remove('hidden');
+            // Remove o foco do botão para garantir que o menu feche no mobile
+            document.activeElement.blur();
+        }, 300);
+    }
+}
+
+// Adicione a chamada nos seus eventos:
+btnBeber.addEventListener('click', () => {
+    // ... seu código de somar água ...
+    atualizarVisual();
+    fecharMenuCelular(); // <--- Chama aqui
+});
+
+btnZerar.addEventListener('click', () => {
+    if (confirm("Deseja mesmo esvaziar sua garrafa?")) {
+        // ... seu código de zerar ...
+        atualizarVisual();
+        fecharMenuCelular(); // <--- Chama aqui
+    }
+});
+
+const btnTema = document.getElementById('btn-tema');
+
+btnTema.addEventListener('click', () => {
+    // toggle adiciona a classe se não tiver, e remove se já tiver
+    document.body.classList.toggle('alt-theme');
+    
+    // Opcional: salvar a preferência no LocalStorage
+    const temaAtivo = document.body.classList.contains('alt-theme');
+    localStorage.setItem('temaEscuro', temaAtivo);
+});
+
+// Ao carregar a página, verificar se o usuário já tinha escolhido o tema
+window.addEventListener('load', () => {
+    if (localStorage.getItem('temaEscuro') === 'true') {
+        document.body.classList.add('alt-theme');
+    }
+});

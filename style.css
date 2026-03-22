@@ -6,6 +6,13 @@
         width: 90vw; /* Ocupa a largura da tela */
         height: auto;
     }
+	/* Gira o texto de volta para ficar em pé enquanto a garrafa está deitada */
+    #texto-agua, #texto-restante {
+        transform: rotate(90deg);
+        /* O transform-box garante que ele gire em torno do próprio centro */
+        transform-box: fill-box;
+        transform-origin: center;
+    }
 }
 
 /* Isso faz com que TODOS os elementos respeitem a largura exata, 
@@ -27,6 +34,16 @@ html, body { /* Seletores para mudanças no HTML e BODY */
     font-style: normal;
     font-variation-settings:
     "GRAD" 0;
+	
+	transition: background-image 0.5s ease; /* Deixa a troca suave */
+}
+
+/* Novo paapel de parede quando o tema for alterado */
+body.alt-theme {
+    background-image: url("https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3lzNG54dTl6ZGJ1bnRoandpZm81b2UzN3ZlY2UwaTZsanZoMXd6aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QjkkR8Nn0clgYcnOtC/giphy.gif");
+	background-repeat: no-repeat;                     /* Prevents the image from tiling */
+    background-position: center center;               /* Centers the image within the container */
+    background-size: cover;  
 }
 
 
@@ -45,6 +62,16 @@ html, body { /* Seletores para mudanças no HTML e BODY */
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 10;
+}
+
+/* Força o fechamento do menu */
+.dropdown-content.hidden {
+    display: none !important;
+}
+
+/* Garante que o menu apareça quando o pai (.dropdown) for clicado/focado */
+.dropdown:focus-within .dropdown-content {
+    display: block;
 }
 
 /* Exibir o menu suspenso ao passar o cursor sobre ele */
