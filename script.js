@@ -39,7 +39,7 @@ btnBeber.addEventListener('click', () => {
 });
 
 btnZerar.addEventListener('click', () => {
-    if (confirm("Deseja esvaziar sua garrafa?")) {
+    if (confirm("Deseja mesmo esvaziar sua garrafa?")) {
         totalIngerido = 0;
         localStorage.setItem('aguaConsumida', 0);
         atualizarVisual();

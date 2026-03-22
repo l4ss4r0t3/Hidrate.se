@@ -1,25 +1,97 @@
-html, body {
-	background-color: black;
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+
+@media (orientation: landscape) {
+	.garrafa svg {
+        transform: rotate(-90deg); /* Deita a garrafa */
+        width: 90vw; /* Ocupa a largura da tela */
+        height: auto;
+    }
+
+    /* "Desgira" os números para que a sua irmã consiga ler sem virar o pescoço */
+    #texto-agua, #texto-restante {
+        transform: rotate(90deg); 
+    }	
+}
+
+/* Isso faz com que TODOS os elementos respeitem a largura exata, 
+   incluindo bordas e preenchimentos no cálculo. */
+* {
+    box-sizing: border-box;
+}
+
+html, body { /* Seletores para mudanças no HTML e BODY */
 	height: 100%;
     width: 100%;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
+	
+	font-family: "Google Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+    "GRAD" 0;
 }
 
-.container {
-	background-color: white;
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    float: right; /* Alinha o botão à direita */
+    z-index: 20; /* Garante que o container pai esteja no topo de tudo */
+}
+
+.dropdown-content {
+    display: none; /* Oculta o conteúdo do menu suspenso por padrão */
+    position: absolute;
+    right: 10px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+/* Exibir o menu suspenso ao passar o cursor sobre ele */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
+.dropbtn {
+	cursor: pointer;
+}
+
+
+.dropdown-content input, button {
 	width: 100%;
-	height: 100%;
+	height: 50px;
+	
+	background-color: white;
+	border: none;
+	cursor: pointer;
+	
+	font-family: "Google Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+    "GRAD" 0;
 }
 
 .garrafa {
 	width: 100%;
-	height: 80%;
+	height: 100%;
+	position: absolute;
 	
 	display: flex;
     justify-content: center;
     align-items: center;
+	
+	pointer-events: none; /* Faz o mouse "atravessar" essa camada e clicar no que está atrás */
 }
 	
 .garrafa svg {
@@ -28,52 +100,8 @@ html, body {
 	margin: auto;
 }
 
-.informações {
-	width: 100%;
-	height: 20%;
-	margin: auto;
-	
-	display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.informações button {
-	width: 20%;
-	height: 90%;
-	
-	background-color: white;
-	font-size: min(1vw + 1vh, 16px);
-}
-
-.quantidades {
-	display: grid;
-    place-items: center;
-
-    width: 30%;
-	height: 83%;
-	margin-left: 10px;
-	margin-right: 10px;	
-}
-
-.informações input {
-	width: 100%;
-	height: 40%;
-	
-	background-color: white;
-}
-
-.unidade {
-    position: relative;
-    display: inline-block;
-	
-	width: 100%;
-	height: 100%;
-}
-
 #meta-input, #ml-input {
     text-align: center;
-	font-size: min(1vw + 1vh, 16px);
 }
 
 input[type="number"]::-webkit-outer-spin-button,
