@@ -6,11 +6,6 @@
         width: 90vw; /* Ocupa a largura da tela */
         height: auto;
     }
-
-    /* "Desgira" os números para que a sua irmã consiga ler sem virar o pescoço */
-    #texto-agua, #texto-restante {
-        transform: rotate(90deg); 
-    }	
 }
 
 /* Isso faz com que TODOS os elementos respeitem a largura exata, 
