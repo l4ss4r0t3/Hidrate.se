@@ -1,0 +1,14 @@
+# Pastas de configuração do Git e GitHub (Obrigatório ignorar)
+.git/
+.github/
+
+# Documentação que não precisa ir para o site
+README.md
+LICENSE
+
+# Arquivos de design ou fontes que você não usa no código
+*.psd
+*.ai
+
+# O próprio arquivo de ignore
+.git-ftp-ignore

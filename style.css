@@ -1,20 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
 
-@media (orientation: landscape) {
-	.garrafa svg {
-        transform: rotate(-90deg); /* Deita a garrafa */
-        width: 90vw; /* Ocupa a largura da tela */
-        height: auto;
-    }
-	/* Gira o texto de volta para ficar em pé enquanto a garrafa está deitada */
-    #texto-agua, #texto-restante {
-        transform: rotate(90deg);
-        /* O transform-box garante que ele gire em torno do próprio centro */
-        transform-box: fill-box;
-        transform-origin: center;
-    }
-}
-
 /* Isso faz com que TODOS os elementos respeitem a largura exata, 
    incluindo bordas e preenchimentos no cálculo. */
 * {
@@ -35,17 +20,20 @@ html, body { /* Seletores para mudanças no HTML e BODY */
     font-variation-settings:
     "GRAD" 0;
 	
-	transition: background-image 0.5s ease; /* Deixa a troca suave */
+	background-color: white;
+	transition: filter 0.5s ease, background-color 0.5s ease; /* Suaviza a troca de tema */
 }
 
-/* Novo paapel de parede quando o tema for alterado */
+/* A MÁGICA: Inverte tudo */
 body.alt-theme {
-    background-image: url("https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3lzNG54dTl6ZGJ1bnRoandpZm81b2UzN3ZlY2UwaTZsanZoMXd6aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QjkkR8Nn0clgYcnOtC/giphy.gif");
-	background-repeat: no-repeat;                     /* Prevents the image from tiling */
-    background-position: center center;               /* Centers the image within the container */
-    background-size: cover;  
+    /* 100% inverte o preto para branco, azul para laranja, etc. */
+    filter: invert(100%) hue-rotate(180deg);
 }
 
+body.alt-theme .dropdown-content {
+    /* Inverte de volta para a cor original */
+    filter: invert(100%) hue-rotate(180deg);
+}
 
 .dropdown {
     position: relative;
@@ -79,12 +67,18 @@ body.alt-theme {
     display: block;
 }
 
-.dropdown:hover .dropbtn {
-    background-color: #3e8e41;
-}
+
 
 .dropbtn {
+	border: none; 
+	background: none;
+	margin: 5px;
 	cursor: pointer;
+}
+
+.dropbtn img {
+	width: 50px;
+	height: 50px;
 }
 
 
@@ -104,16 +98,53 @@ body.alt-theme {
     "GRAD" 0;
 }
 
+/* Efeito visual quando passa o mouse nos botões e no link do manual */
+.dropdown-content button:hover, 
+.menu-link:hover {
+    background-color: black;
+	color: white;
+    transition: background-color 0.2s ease;
+}
+
+/* Esconde elementos apenas visualmente (bom para SEO e acessibilidade) */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Estiliza o link do manual para parecer um botão igual aos outros */
+.menu-link {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    padding: 15px;
+    background-color: white;
+    font-size: 14px; /* Ajuste para combinar com o padrão dos botões */
+    
+    /* Adicione estas linhas para garantir a consistência */
+    width: 100%;
+    border: none;
+    font-family: "Google Sans", sans-serif;
+}
+
 .garrafa {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	
-	display: flex;
+	top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
     justify-content: center;
     align-items: center;
-	
-	pointer-events: none; /* Faz o mouse "atravessar" essa camada e clicar no que está atrás */
+    z-index: 1; /* Fica atrás do menu */
+    pointer-events: none;
 }
 	
 .garrafa svg {
@@ -124,6 +155,30 @@ body.alt-theme {
 
 #meta-input, #ml-input {
     text-align: center;
+}
+
+@media (orientation: landscape) {
+	.garrafa svg {
+        transform: rotate(-90deg);
+        
+        /* Agora usamos 90% da largura da janela (vw) 
+           como a nova 'altura' da garrafa deitada */
+        height: 90vw; 
+        width: 80vh; /* Controla a 'gordura' da garrafa em relação à altura da tela */
+
+        /* Removemos as travas fixas para permitir que ela acompanhe o redimensionamento */
+        max-width: 100%;
+        max-height: 100%;
+        
+        transition: all 0.5s ease;
+    }
+	/* Gira o texto de volta para ficar em pé enquanto a garrafa está deitada */
+    #texto-agua, #texto-restante {
+        transform: rotate(90deg);
+        /* O transform-box garante que ele gire em torno do próprio centro */
+        transform-box: fill-box;
+        transform-origin: center;
+    }
 }
 
 input[type="number"]::-webkit-outer-spin-button,
