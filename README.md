@@ -1,8 +1,8 @@
 # 💧 Hidrate.se
 
-> **Sua garrafa de água digital para controle de hidratação.**
+> **Sua garrafa de água digital para controle da sua hidratação.**
 
-[![Acesse o Projeto](https://img.shields.io/badge/Acessar_Projeto-Live_Demo-blue?style=for-the-badge&logo=google-chrome&logoColor=white)](https://hcontrol.rf.gd/)
+[![Acesse o Projeto](https://img.shields.io/badge/Acessar_Projeto-Live_Demo-blue?style=for-the-badge&logo=google-chrome&logoColor=white)](https://hidrate.se/)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
@@ -25,7 +25,7 @@ O **Hidrate.se** é um web app minimalista e intuitivo projetado para auxiliar n
 - [x] **Meta Personalizada:** Defina sua meta diária em ml e o sistema ajustará a escala visual da garrafa.
 - [x] **Garrafa Interativa:** Visualização dinâmica do nível da água processada via manipulação de atributos SVG (`height` e `y`).
 - [x] **Cálculo Automático:** Monitoramento do volume restante com alertas visuais de "Meta Batida".
-- [x] **Troca de Tema:** Sistema de "Dark Mode" inteligente que preserva a legibilidade e as cores do menu.
+- [x] **Inversão de Cores:** Sistema de "Dark Mode" inteligente que preserva a legibilidade e as cores do menu.
 - [x] **Reset de Progresso:** Função para esvaziar a garrafa com caixa de diálogo para confirmação de segurança.
 
 ---
@@ -45,7 +45,7 @@ O **Hidrate.se** é um web app minimalista e intuitivo projetado para auxiliar n
 2.  **Registro:** Digite a quantidade consumida no campo **Água Ingerida**.
 3.  **Ação:** Clique em **BEBER** ou pressione **Enter** para atualizar a garrafa.
 4.  **Manutenção:** Use o botão **ESVAZIAR** para resetar o contador e iniciar um novo ciclo.
-5.  **Personalização:** Alterne o tema clicando em **Mudar Tema** conforme sua preferência visual.
+5.  **Personalização:** Alterne o tema clicando em **Inverter Cores** conforme sua preferência visual.
 
 ---
 
