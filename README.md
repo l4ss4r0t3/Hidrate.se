@@ -15,7 +15,7 @@ O **Hidrate.se** é um web app minimalista e intuitivo projetado para auxiliar n
 
 * **Persistência de Dados:** Integração com `Window.localStorage` para manter o progresso e as configurações do usuário mesmo após o fechamento do navegador.
 * **Design Responsivo & Adaptativo:** Layout otimizado para Desktop e Mobile, incluindo suporte específico para o modo **Landscape** (paisagem) com rotação inteligente de elementos e textos.
-* **Acessibilidade (A11y):** Uso de tags semânticas HTML5, `aria-labels` e classes `sr-only` para garantir que leitores de tela interpretem corretamente a interface.
+* **Acessibilidade (A11y):** Uso de tags semânticas HTML5, `aria-labels` para garantir que leitores de tela interpretem corretamente a interface.
 * **UX Refinada:** Atalhos de teclado (tecla Enter), tratamento de foco para fechamento automático de teclado mobile e transições suaves de tema via filtros CSS.
 
 ---
@@ -26,7 +26,7 @@ O **Hidrate.se** é um web app minimalista e intuitivo projetado para auxiliar n
 - [x] **Garrafa Interativa:** Visualização dinâmica do nível da água processada via manipulação de atributos SVG (`height` e `y`).
 - [x] **Cálculo Automático:** Monitoramento do volume restante com alertas visuais de "Meta Batida".
 - [x] **Inversão de Cores:** Sistema de "Dark Mode" inteligente que preserva a legibilidade e as cores do menu.
-- [x] **Reset de Progresso:** Função para esvaziar a garrafa com caixa de diálogo para confirmação de segurança.
+- [x] **Reset de Progresso:** Função para encher a garrafa com caixa de diálogo para confirmação de segurança.
 
 ---
 
@@ -41,10 +41,10 @@ O **Hidrate.se** é um web app minimalista e intuitivo projetado para auxiliar n
 
 ## 💻 Como Usar
 
-1.  **Configuração:** Clique no ícone de menu (superior direito) e defina sua **Meta Diária** (ex: 2000ml).
+1.  **Configuração:** Clique no ícone de menu (superior direito) e defina sua **Meta Diária** (Meta padrão: 2000ml).
 2.  **Registro:** Digite a quantidade consumida no campo **Água Ingerida**.
-3.  **Ação:** Clique em **BEBER** ou pressione **Enter** para atualizar a garrafa.
-4.  **Manutenção:** Use o botão **ESVAZIAR** para resetar o contador e iniciar um novo ciclo.
+3.  **Ação:** Clique em **Beber Água** ou pressione **Enter** para atualizar a garrafa.
+4.  **Manutenção:** Use o botão **Encher Garrafa** para resetar o contador e iniciar um novo ciclo.
 5.  **Personalização:** Alterne o tema clicando em **Inverter Cores** conforme sua preferência visual.
 
 ---

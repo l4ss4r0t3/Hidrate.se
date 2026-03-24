@@ -98,7 +98,8 @@ body.alt-theme .dropdown-content {
    INPUTS E BOTÕES DENTRO DO MENU
    Estilo unificado para inputs e botões do dropdown.
    ============================================================= */
-.dropdown-content input, button {
+.dropdown-content input, 
+.dropdown-content button {
     width: 100%;
     height: 50px;
 
@@ -113,28 +114,27 @@ body.alt-theme .dropdown-content {
     font-variation-settings: "GRAD" 0;
 }
 
+.dropdown-content label {
+    display: block; /* Permite que a largura e altura funcionem */
+    background-color: white;
+    text-align: center;
+    width: 100%;
+    
+    /* Aumente a altura ou use padding para não ficar muito "espremido" */
+    padding: 3px 0; 
+    
+    /* Estética para combinar com seus inputs */
+    font-family: "Google Sans", sans-serif;
+    font-size: 14px;
+    cursor: default;
+}
+
 /* Efeito hover nos botões e no link do manual */
 .dropdown-content button:hover,
 .menu-link:hover {
     background-color: black;
     color: white;
     transition: background-color 0.2s ease;
-}
-
-/* =============================================================
-   ACESSIBILIDADE — SR-ONLY
-   Esconde elementos visualmente mas mantém para leitores de tela.
-   Usado nas labels dos inputs para atender critérios de A11y.
-   ============================================================= */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
 }
 
 /* =============================================================
