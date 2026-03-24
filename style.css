@@ -33,7 +33,7 @@ html, body {
 }
 
 /* =============================================================
-   TEMA ALTERNATIVO (DARK MODE)
+   TEMA ALTERNATIVO (INVERSÃO DE CORES)
    Inverte todas as cores do body com filtro CSS.
    hue-rotate(180deg) garante que as cores fiquem naturais
    após a inversão (ex: o azul da água não vira laranja).
@@ -73,6 +73,9 @@ body.alt-theme .dropdown-content {
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 10;
+	
+	max-height: 60vh; /* O menu ocupará no máximo 60% da altura da tela */
+    overflow-y: auto;  /* Ativa o scroll apenas se houver muitos itens */
 }
 
 /* =============================================================
@@ -152,6 +155,10 @@ body.alt-theme .dropdown-content {
     font-family: "Google Sans", sans-serif;
 }
 
+/* =============================================================
+   WRAPPER DOS INPUTS COM PREFIXO
+   Posiciona o rótulo (Meta / Qtd.) dentro do campo de input.
+   ============================================================= */
 .input-wrapper {
     position: relative;
     display: flex;
@@ -167,7 +174,7 @@ body.alt-theme .dropdown-content {
     pointer-events: none; /* Cliques passam para o input */
 }
 
-/* Empurra o valor para não sobrepor o prefixo */
+/* Empurra o valor digitado para não sobrepor o prefixo */
 .input-wrapper input {
     padding-left: 40px;
 }
@@ -221,13 +228,6 @@ body.alt-theme .dropdown-content {
         max-height: 100%;
 
         transition: all 0.5s ease;
-    }
-
-    /* Gira os textos SVG de volta para ficarem legíveis */
-    #texto-agua, #texto-restante {
-        transform: rotate(90deg);
-        transform-box: fill-box;   /* Garante rotação em torno do próprio centro */
-        transform-origin: center;
     }
 }
 
