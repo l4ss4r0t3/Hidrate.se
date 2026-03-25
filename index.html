@@ -6,6 +6,7 @@
   <!-- ============================================================
        CONFIGURAÇÕES BÁSICAS
        Define o conjunto de caracteres, escala para mobile e título.
+       user-scalable=no impede o zoom acidental ao clicar nos inputs.
        ============================================================ -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -31,7 +32,7 @@
   <meta property="og:site_name" content="Hidrate.se">
   <meta property="og:description" content="Acompanhe sua meta de hidratação com uma garrafa de água digital e interativa.">
 
-  <!-- Imagem de preview ao compartilhar o link (1220x640px) -->
+  <!-- Imagem de preview ao compartilhar o link (1200x630px recomendado) -->
   <meta property="og:image" content="https://hidrate.se/images/og_1200x630.png">
   <meta property="og:image:width" content="1220">
   <meta property="og:image:height" content="630">
@@ -83,13 +84,15 @@
       <!-- Conteúdo do menu suspenso (oculto por padrão via CSS) -->
       <div class="dropdown-content">
 
+        <!-- Aviso exibido enquanto o usuário não está logado.
+             Ocultado via JS após o login bem-sucedido. -->
         <p id="auth-warning" style="color: #ff4444; font-weight: bold; text-align: center;">
-        ⚠️ Faça login para registrar sua água.
+          ⚠️ Faça login para SALVAR seus REGISTROS.
         </p>
 
-		    <!-- Label para auxiliar leitores de tela (acessibilidade) -->
+        <!-- Label para auxiliar leitores de tela (acessibilidade) -->
         <label for="meta-input">Sua Meta Diária</label>
-        <!-- Campo para definir a capacidade/meta diária da garrafa -->
+        <!-- Campo para definir a meta diária de consumo de água (em ml) -->
         <span class="input-wrapper">
           <span class="input-prefix">Meta(ml)</span>
           <input type="number" inputmode="numeric" id="meta-input" value="2000">
@@ -97,7 +100,7 @@
 
         <!-- Label para auxiliar leitores de tela (acessibilidade) -->
         <label for="ml-input">Água a Beber</label>
-        <!-- Campo para digitar a quantidade de água a ser bebida -->
+        <!-- Campo para digitar a quantidade de água a ser registrada (em ml) -->
         <span class="input-wrapper">
           <span class="input-prefix">Qtd.(ml)</span>
           <input type="number" inputmode="numeric" id="ml-input">
@@ -106,18 +109,24 @@
         <!-- Registra a quantidade bebida e diminui o nível da garrafa -->
         <button type="button" id="btn-beber">Beber Água</button>
 
-        <!-- Reseta o progresso, enchendo a garrafa novamente -->
+        <!-- Reseta o progresso do dia, enchendo a garrafa novamente -->
         <button type="button" id="btn-zerar">Encher Garrafa</button>
 
-        <!-- Inverte as cores da interface -->
+        <!-- Alterna entre tema claro e escuro (inversão de cores via CSS) -->
         <button type="button" id="btn-tema">Inverter Cores</button>
-		
-		    <button type="button" id="btn-auth" onclick="window.signInWithGoogle()">Login com Google</button>
-		
+
+        <!-- Botão de autenticação: exibe "Login com Google" ou "Sair (Google)"
+             dependendo do estado do usuário. Controlado pelo onAuthStateChanged. -->
+        <button type="button" id="btn-auth" onclick="window.signInWithGoogle()">Login com Google</button>
+
         <!-- Link externo para o README do projeto no GitHub -->
         <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
           Manual / Sobre
         </a>
+
+        <!-- Links para as páginas legais do projeto -->
+        <a href="/privacidade.html" target="_blank" class="menu-link">Política de Privacidade</a>
+        <a href="/termos.html" target="_blank" class="menu-link">Termos de Serviço</a>
 
       </div>
     </div>
@@ -133,9 +142,9 @@
        registra o consumo. "Encher Garrafa" reseta para cheio.
 
        Estrutura do SVG (viewBox: 16x32 unidades):
-       - clipPath         → limita a água ao interior da garrafa
-       - rect #agua-nivel → nível da água (manipulado via JS)
-       - g #pixels-garrafa → estrutura visual pixel a pixel
+       - clipPath           → limita a água ao interior da garrafa
+       - rect #agua-nivel   → nível da água (manipulado via JS)
+       - g #pixels-garrafa  → estrutura visual pixel a pixel
        - text #texto-ingerido → ml restantes (numerador do rótulo)
        - line #linha-fracao   → separador do rótulo (some quando vazia)
        - text #texto-meta     → meta diária (denominador do rótulo)
@@ -147,14 +156,17 @@
   <main class="garrafa">
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="32" viewBox="0 0 16 32">
 
-  <!-- CAMADA 1: Nível da água — height e y controlados pelo script.js -->
-  <!-- clipPath garante que a água não vaze para fora do interior da garrafa -->
+  <!-- CAMADA 1: Clip e nível da água
+       O clipPath restringe o retângulo de água ao interior da garrafa,
+       impedindo que ele ultrapasse as bordas do SVG. -->
   <defs>
     <clipPath id="clip-interior">
       <rect x="1" y="7" width="14" height="24"/>
     </clipPath>
   </defs>
-  <!-- Começa com height=ALTURA_MAX_SVG e y=7 para exibir a garrafa cheia -->
+
+  <!-- Retângulo de água: começa com height=24 (cheio) e y=7 (topo do interior).
+       O script.js reduz height e aumenta y proporcionalmente ao consumo. -->
   <rect
     id="agua-nivel"
     x="1" y="7" width="14" height="24"
@@ -478,9 +490,9 @@
   <rect x="2" y="31" width="12" height="1" fill="#000000" fill-opacity="1.0"/>
   </g>
 
-  <!-- CAMADA 3: Rótulo no interior da garrafa (y=14 a y=19) -->
+  <!-- CAMADA 3: Rótulo no interior da garrafa (centralizado em y=14 a y=19) -->
 
-  <!-- Numerador: ml restantes na garrafa -->
+  <!-- Numerador: ml restantes (ou "Meta" quando a meta é atingida) -->
   <text
     id="texto-ingerido"
     x="8" y="16"
@@ -490,13 +502,13 @@
     font-family="Google Sans, sans-serif">
   </text>
 
-  <!-- Linha da fração (some quando a garrafa está vazia) -->
+  <!-- Linha divisória da fração — oculta via JS quando meta é atingida -->
   <line
     id="linha-fracao"
     x1="4" y1="17" x2="12" y2="17"
     stroke="black" stroke-width="0.2"/>
 
-  <!-- Denominador: meta diária (capacidade da garrafa) -->
+  <!-- Denominador: meta diária em ml -->
   <text
     id="texto-meta"
     x="8" y="19"
@@ -509,62 +521,84 @@
   </svg>
   </main>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  import { firebaseConfig } from './config.js';
+  <!-- ============================================================
+       FIREBASE — AUTENTICAÇÃO E BANCO DE DADOS
+       Importado como módulo ES para isolamento de escopo.
+       As funções e instâncias necessárias são expostas no objeto
+       window para que o script.js (não-módulo) possa acessá-las.
+       ============================================================ -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { firebaseConfig } from './config.js';
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
+    // Inicializa o app Firebase com as configurações do projeto
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-  // Expõe ferramentas para o script.js
-  window.db = db;
-  window.auth = auth;
-  window.updateDoc = updateDoc;
-  window.doc = doc;
-  window.increment = increment;
+    // Expõe instâncias e funções do Firebase para o script.js
+    window.db = db;
+    window.auth = auth;
+    window.updateDoc = updateDoc;
+    window.doc = doc;
+    window.increment = increment;
 
-  // Funções de Login/Logout globais
-  window.fazerLogin = () => signInWithPopup(auth, provider).catch(console.error);
-  window.fazerLogout = () => signOut(auth);
+    // Funções de login e logout acessíveis globalmente
+    window.fazerLogin = () => signInWithPopup(auth, provider).catch(console.error);
+    window.fazerLogout = () => signOut(auth);
 
-  // Observador de Autenticação
-  onAuthStateChanged(auth, (user) => {
-    const btnAuth = document.getElementById('btn-auth');
-    if (user) {
-      if(btnAuth) btnAuth.textContent = "Sair (Google)";
-      if(btnAuth) btnAuth.onclick = window.fazerLogout;
-      
-      // Sincronização em tempo real
-      const userRef = doc(db, "usuarios", user.uid);
-      onSnapshot(userRef, (docSnap) => {
-        if (docSnap.exists()) {
-          const dados = docSnap.data();
-          window.totalBebido = dados.totalBebido || 0;
-          window.metaDiaria = dados.metaDiaria || 2000;
-          
-          // Atualiza o visual e os inputs
-          if (typeof window.atualizarVisual === 'function') window.atualizarVisual();
-          const inputMeta = document.getElementById('meta-input');
-          if (inputMeta) inputMeta.value = window.metaDiaria;
-        } else {
-          setDoc(userRef, { totalBebido: 0, metaDiaria: 2000 });
-        }
-      });
-    } else {
-      if(btnAuth) btnAuth.textContent = "Login com Google";
-      if(btnAuth) btnAuth.onclick = window.fazerLogin;
-      // Se deslogar, volta ao padrão
-      window.totalBebido = 0;
-      window.atualizarVisual();
-    }
-  });
-</script>
+    // ============================================================
+    // OBSERVADOR DE AUTENTICAÇÃO
+    // Disparado automaticamente ao carregar a página e sempre que
+    // o estado de login muda (login, logout ou expiração de sessão).
+    // ============================================================
+    onAuthStateChanged(auth, (user) => {
+      const btnAuth = document.getElementById('btn-auth');
+      const authWarning = document.getElementById('auth-warning');
 
-<script src="script.js"></script>
+      if (user) {
+        // Usuário logado: ajusta o botão e oculta o aviso de login
+        if (btnAuth) { btnAuth.textContent = "Sair (Google)"; btnAuth.onclick = window.fazerLogout; }
+        if (authWarning) authWarning.style.display = 'none';
+
+        // Escuta mudanças em tempo real no documento do usuário no Firestore
+        const userRef = doc(db, "usuarios", user.uid);
+        onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            // Sincroniza estado local com os dados salvos na nuvem
+            const dados = docSnap.data();
+            window.totalBebido = dados.totalBebido || 0;
+            window.metaDiaria = dados.metaDiaria || 2000;
+
+            // Atualiza o visual e o campo de meta na interface
+            if (typeof window.atualizarVisual === 'function') window.atualizarVisual();
+            const inputMeta = document.getElementById('meta-input');
+            if (inputMeta) inputMeta.value = window.metaDiaria;
+          } else {
+            // Primeiro acesso: cria o documento do usuário com valores padrão
+            setDoc(userRef, { totalBebido: 0, metaDiaria: 2000 });
+          }
+        });
+      } else {
+        // Usuário deslogado: restaura o botão e exibe o aviso de login
+        if (btnAuth) { btnAuth.textContent = "Login com Google"; btnAuth.onclick = window.fazerLogin; }
+        if (authWarning) authWarning.style.display = 'block';
+
+        // Reseta o estado local para os valores padrão
+        window.totalBebido = 0;
+        window.atualizarVisual();
+      }
+    });
+  </script>
+
+  <!-- Script principal: lógica da garrafa, menu e tema -->
+  <script src="script.js"></script>
+
+  <!-- Rodapé reservado para uso futuro -->
+  <footer></footer>
+
 </body>
-
 </html>
