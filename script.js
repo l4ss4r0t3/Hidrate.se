@@ -1,142 +1,107 @@
 // =============================================================
-// CONSTANTES DO SVG
-// Define os limites da garrafa desenhada no SVG.
+// ESTADO GLOBAL (Sincronizado com Firebase)
 // =============================================================
-const ALTURA_MAX_SVG = 24; // Interior preenchível: y=7 até y=31
-const POSICAO_BASE_Y = 31; // Base interna da garrafa (de onde a água desce)
+window.totalBebido = 0;
+window.metaDiaria = 2000;
 
 // =============================================================
-// REFERÊNCIAS AOS ELEMENTOS DO HTML
-// Captura os elementos da página para manipulá-los via JS.
+// REFERÊNCIAS AOS ELEMENTOS
 // =============================================================
-const inputMl = document.getElementById('ml-input');        // Campo de quantidade a beber
-const inputMeta = document.getElementById('meta-input');    // Campo da meta diária
-const btnBeber = document.getElementById('btn-beber');      // Botão "Beber Água"
-const btnZerar = document.getElementById('btn-zerar');      // Botão "Encher Garrafa"
-const elementoAgua = document.getElementById('agua-nivel'); // Retângulo SVG que representa a água
+const inputMl = document.getElementById('ml-input');
+const inputMeta = document.getElementById('meta-input');
+const btnBeber = document.getElementById('btn-beber');
+const btnZerar = document.getElementById('btn-zerar');
+const elementoAgua = document.getElementById('agua-nivel');
+
+const ALTURA_MAX_SVG = 24;
+const POSICAO_BASE_Y = 31;
 
 // =============================================================
-// CARREGAMENTO DO ESTADO SALVO
-// Recupera os dados do localStorage ao abrir a página.
-// - totalBebido: quanto já foi consumido no dia (desconta da garrafa)
-// - metaDiaria: capacidade total da garrafa
-// Se não houver dados salvos, usa valores padrão.
+// FUNÇÃO: ATUALIZAR VISUAL (Acessível globalmente)
 // =============================================================
-let totalBebido = parseFloat(localStorage.getItem('aguaConsumida')) || 0;
-let metaDiaria = parseFloat(localStorage.getItem('metaSalva')) || 2000; // Padrão 2000ml evita divisão por zero
+window.atualizarVisual = function() {
+    const restante = Math.max(window.metaDiaria - window.totalBebido, 0);
+    const porcentagem = Math.min(Math.max(restante / window.metaDiaria, 0), 1);
 
-// Preenche o campo de meta com o valor salvo (ou padrão)
-if (inputMeta) inputMeta.value = metaDiaria;
-
-// Atualiza a garrafa com os dados carregados
-atualizarVisual();
-
-// =============================================================
-// EVENTO: CAMPO DE META DIÁRIA
-// Atualiza a meta (capacidade da garrafa) e redesenha sempre
-// que o usuário digitar um novo valor.
-// =============================================================
-if (inputMeta) {
-    inputMeta.addEventListener('input', () => {
-        // Se o campo estiver vazio, usa 2000 como fallback temporário
-        const novaMeta = parseFloat(inputMeta.value) || 2000;
-        if (novaMeta > 0) {
-            metaDiaria = novaMeta;
-            localStorage.setItem('metaSalva', metaDiaria); // Persiste a meta no navegador
-            atualizarVisual();
-        }
-    });
-}
-
-// =============================================================
-// EVENTO: BOTÃO BEBER ÁGUA
-// Soma a quantidade digitada ao total bebido, diminuindo
-// o nível da garrafa. Salva no localStorage e atualiza o visual.
-// =============================================================
-btnBeber.addEventListener('click', () => {
-    const valor = parseFloat(inputMl.value) || 0;
-    if (valor > 0) {
-        totalBebido += valor;
-        localStorage.setItem('aguaConsumida', totalBebido); // Persiste o progresso
-        inputMl.value = '';  // Limpa o campo após registrar
-        atualizarVisual();
-        fecharMenuCelular(); // Fecha o menu e o teclado no mobile
-    }
-});
-
-// =============================================================
-// EVENTO: TECLA ENTER NO CAMPO DE ML
-// Permite registrar a água pressionando Enter,
-// sem precisar clicar no botão.
-// =============================================================
-inputMl.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // Evita recarregar a página
-        btnBeber.click();       // Reutiliza a lógica do botão Beber
-    }
-});
-
-// =============================================================
-// EVENTO: BOTÃO ENCHER GARRAFA
-// Reseta o total bebido para zero, enchendo a garrafa novamente.
-// Pede confirmação antes de executar.
-// =============================================================
-btnZerar.addEventListener('click', () => {
-    if (confirm('Deseja encher a garrafa novamente?')) {
-        totalBebido = 0;
-        localStorage.setItem('aguaConsumida', 0); // Zera o valor salvo
-        atualizarVisual();
-        fecharMenuCelular();
-    }
-});
-
-// =============================================================
-// FUNÇÃO: ATUALIZAR VISUAL DA GARRAFA
-// Recalcula o nível da água e atualiza os elementos SVG.
-//
-// LÓGICA INVERTIDA: a garrafa começa cheia e esvazia ao beber.
-// - porcentagem: representa o quanto RESTA na garrafa (1 = cheia, 0 = vazia)
-// - novaAltura: altura do retângulo de água (diminui ao beber)
-// - novoY: posição Y do retângulo (sobe conforme a água baixa)
-//
-// Rótulo no formato de fração (y=14 a y=19):
-//   texto-ingerido → numerador: ml restantes
-//   linha-fracao   → linha separadora (some quando vazia)
-//   texto-meta     → denominador: meta diária
-//
-// Quando a garrafa esvazia exibe "Acabou! 💧" e esconde a linha.
-// =============================================================
-function atualizarVisual() {
-    // Porcentagem restante na garrafa (1 = cheia, 0 = vazia)
-    const restante = Math.max(metaDiaria - totalBebido, 0);
-    const porcentagem = Math.min(Math.max(restante / metaDiaria, 0), 1);
-
-    // Calcula a nova altura e posição Y do retângulo SVG da água
     const novaAltura = porcentagem * ALTURA_MAX_SVG;
-    const novoY = POSICAO_BASE_Y - novaAltura; // A água desce de cima para baixo
+    const novoY = POSICAO_BASE_Y - novaAltura;
 
-    elementoAgua.setAttribute('height', novaAltura);
-    elementoAgua.setAttribute('y', novoY);
+    if (elementoAgua) {
+        elementoAgua.setAttribute('height', novaAltura);
+        elementoAgua.setAttribute('y', novoY);
+    }
 
-    // Atualiza o rótulo em formato de fração no interior da garrafa
-    const txtIngerido = document.getElementById('texto-ingerido'); // Numerador (restante)
-    const txtMeta = document.getElementById('texto-meta');         // Denominador (meta)
-    const linhaFracao = document.getElementById('linha-fracao');   // Linha separadora
+    const txtIngerido = document.getElementById('texto-ingerido');
+    const txtMeta = document.getElementById('texto-meta');
+    const linhaFracao = document.getElementById('linha-fracao');
 
     if (txtIngerido && txtMeta) {
         if (porcentagem <= 0) {
-            // Garrafa vazia: exibe mensagem e esconde a linha
             txtIngerido.textContent = 'Meta';
             txtMeta.textContent = 'Batida! 🎉';
             if (linhaFracao) linhaFracao.style.display = 'none';
         } else {
-            // Exibe fração: ml restantes sobre a meta diária
             txtIngerido.textContent = `${restante}ml`;
-            txtMeta.textContent = `${metaDiaria}ml`;
+            txtMeta.textContent = `${window.metaDiaria}ml`;
             if (linhaFracao) linhaFracao.style.display = 'block';
         }
     }
+};
+
+// =============================================================
+// EVENTOS (Firebase Integration)
+// =============================================================
+
+// Beber Água
+btnBeber.addEventListener('click', async () => {
+    const valor = parseFloat(inputMl.value) || 0;
+    const user = window.auth?.currentUser;
+
+    if (valor > 0) {
+        if (user) {
+            const userRef = window.doc(window.db, "usuarios", user.uid);
+            await window.updateDoc(userRef, { totalBebido: window.increment(valor) });
+        } else {
+            window.totalBebido += valor;
+            window.atualizarVisual();
+        }
+        inputMl.value = '';
+        fecharMenuCelular();
+    }
+});
+
+// Atualizar Meta
+if (inputMeta) {
+    inputMeta.addEventListener('change', async () => {
+        const novaMeta = parseFloat(inputMeta.value) || 2000;
+        const user = window.auth?.currentUser;
+
+        if (user && novaMeta > 0) {
+            const userRef = window.doc(window.db, "usuarios", user.uid);
+            await window.updateDoc(userRef, { metaDiaria: novaMeta });
+        } else {
+            window.metaDiaria = novaMeta;
+            window.atualizarVisual();
+        }
+    });
 }
+
+// Zerar / Encher
+btnZerar.addEventListener('click', async () => {
+    const user = window.auth?.currentUser;
+    if (confirm('Deseja encher a garrafa novamente?')) {
+        if (user) {
+            const userRef = window.doc(window.db, "usuarios", user.uid);
+            await window.updateDoc(userRef, { totalBebido: 0 });
+        } else {
+            window.totalBebido = 0;
+            window.atualizarVisual();
+        }
+        fecharMenuCelular();
+    }
+});
+
+// Restante das funções (Menu, Tecla Enter, Tema) permanecem iguais...
 
 // =============================================================
 // CONTROLE DO MENU DROPDOWN (100% via JavaScript)

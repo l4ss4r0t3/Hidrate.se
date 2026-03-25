@@ -83,7 +83,11 @@
       <!-- Conteúdo do menu suspenso (oculto por padrão via CSS) -->
       <div class="dropdown-content">
 
-		<!-- Label para auxiliar leitores de tela (acessibilidade) -->
+        <p id="auth-warning" style="color: #ff4444; font-weight: bold; text-align: center;">
+        ⚠️ Faça login para registrar sua água.
+        </p>
+
+		    <!-- Label para auxiliar leitores de tela (acessibilidade) -->
         <label for="meta-input">Sua Meta Diária</label>
         <!-- Campo para definir a capacidade/meta diária da garrafa -->
         <span class="input-wrapper">
@@ -107,7 +111,9 @@
 
         <!-- Inverte as cores da interface -->
         <button type="button" id="btn-tema">Inverter Cores</button>
-
+		
+		    <button type="button" id="btn-auth" onclick="window.signInWithGoogle()">Login com Google</button>
+		
         <!-- Link externo para o README do projeto no GitHub -->
         <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
           Manual / Sobre
@@ -506,81 +512,59 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, doc, onSnapshot, updateDoc, increment, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { firebaseConfig } from './config.js';
 
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCemXoRXZJAy9_43CxlM8fVJJIQTV4UvwQ",
-  authDomain: "hidrate-se7.firebaseapp.com",
-  projectId: "hidrate-se7",
-  storageBucket: "hidrate-se7.firebasestorage.app",
-  messagingSenderId: "422484823149",
-  appId: "1:422484823149:web:7a48f2227fbcd88aba0364",
-  measurementId: "G-10ZHRZ11PS"
-};
-
-  // Inicializa o Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  // Expõe o 'db' e 'auth' para o seu script.js global (opcional ou mova sua lógica para cá)
+  // Expõe ferramentas para o script.js
   window.db = db;
   window.auth = auth;
+  window.updateDoc = updateDoc;
+  window.doc = doc;
+  window.increment = increment;
 
-  // Lógica de Login
-  const btnLogin = document.getElementById('btn-login');
-  const btnLogout = document.getElementById('btn-logout');
-  const userInfo = document.getElementById('user-info');
-  const userName = document.getElementById('user-name');
-
-  btnLogin.addEventListener('click', () => signInWithPopup(auth, provider));
-  btnLogout.addEventListener('click', () => signOut(auth));
+  // Funções de Login/Logout globais
+  window.fazerLogin = () => signInWithPopup(auth, provider).catch(console.error);
+  window.fazerLogout = () => signOut(auth);
 
   // Observador de Autenticação
   onAuthStateChanged(auth, (user) => {
+    const btnAuth = document.getElementById('btn-auth');
     if (user) {
-      btnLogin.style.display = 'none';
-      btnLogout.style.display = 'block';
-      userInfo.style.display = 'block';
-      userName.textContent = user.displayName.split(' ')[0];
+      if(btnAuth) btnAuth.textContent = "Sair (Google)";
+      if(btnAuth) btnAuth.onclick = window.fazerLogout;
       
-      // Inicia a sincronização dos dados do hidrate.se
-      iniciarSincronizacao(user.uid);
+      // Sincronização em tempo real
+      const userRef = doc(db, "usuarios", user.uid);
+      onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const dados = docSnap.data();
+          window.totalBebido = dados.totalBebido || 0;
+          window.metaDiaria = dados.metaDiaria || 2000;
+          
+          // Atualiza o visual e os inputs
+          if (typeof window.atualizarVisual === 'function') window.atualizarVisual();
+          const inputMeta = document.getElementById('meta-input');
+          if (inputMeta) inputMeta.value = window.metaDiaria;
+        } else {
+          setDoc(userRef, { totalBebido: 0, metaDiaria: 2000 });
+        }
+      });
     } else {
-      btnLogin.style.display = 'block';
-      btnLogout.style.display = 'none';
-      userInfo.style.display = 'none';
+      if(btnAuth) btnAuth.textContent = "Login com Google";
+      if(btnAuth) btnAuth.onclick = window.fazerLogin;
+      // Se deslogar, volta ao padrão
+      window.totalBebido = 0;
+      window.atualizarVisual();
     }
   });
-
-  // Função para vincular o Firebase ao seu script visual
-  function iniciarSincronizacao(userId) {
-    const userRef = doc(db, "usuarios", userId);
-    
-    onSnapshot(userRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const dados = docSnap.data();
-        // Aqui chamamos a variável global do seu script.js
-        window.totalBebido = dados.totalBebido || 0;
-        window.metaDiaria = dados.metaDiaria || 2000;
-        
-        // Dispara a função visual que já existe no seu script
-        if (typeof window.atualizarVisual === 'function') {
-           window.atualizarVisual();
-        }
-      } else {
-        // Cria perfil se for a primeira vez
-        setDoc(userRef, { totalBebido: 0, metaDiaria: 2000 });
-      }
-    });
-  }
 </script>
 
-  <!-- Script carregado no final do body para garantir que o DOM já existe -->
-  <script src="script.js"></script>
-
+<script src="script.js"></script>
 </body>
 
 </html>
