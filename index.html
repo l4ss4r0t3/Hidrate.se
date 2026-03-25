@@ -84,9 +84,9 @@
       <!-- Conteúdo do menu suspenso (oculto por padrão via CSS) -->
       <div class="dropdown-content">
 
-        <!-- Aviso exibido enquanto o usuário não está logado.
-             Ocultado via JS após o login bem-sucedido. -->
-        <p id="auth-warning" style="color: #ff4444; font-weight: bold; text-align: center;">
+        <!-- Oculto por padrão para evitar flash antes do Firebase responder.
+        O onAuthStateChanged exibe (deslogado) ou mantém oculto (logado). -->
+        <p id="auth-warning" style="display:none; color: #ff4444; font-weight: bold; text-align: center;">
           ⚠️ Faça login para SALVAR seus REGISTROS.
         </p>
 
@@ -115,9 +115,8 @@
         <!-- Alterna entre tema claro e escuro (inversão de cores via CSS) -->
         <button type="button" id="btn-tema">Inverter Cores</button>
 
-        <!-- Botão de autenticação: exibe "Login com Google" ou "Sair (Google)"
-             dependendo do estado do usuário. Controlado pelo onAuthStateChanged. -->
-        <button type="button" id="btn-auth" onclick="window.signInWithGoogle()">Login com Google</button>
+        <!-- onclick removido: o onAuthStateChanged atribui window.fazerLogin ou window.fazerLogout dinamicamente. -->
+        <button type="button" id="btn-auth">Login com Google</button>
 
         <!-- Link externo para o README do projeto no GitHub -->
         <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
