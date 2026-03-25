@@ -83,7 +83,11 @@
       <!-- Conteúdo do menu suspenso (oculto por padrão via CSS) -->
       <div class="dropdown-content">
 
-		<!-- Label para auxiliar leitores de tela (acessibilidade) -->
+        <p id="auth-warning" style="color: #ff4444; font-weight: bold; text-align: center;">
+        ⚠️ Faça login para registrar sua água.
+        </p>
+
+		    <!-- Label para auxiliar leitores de tela (acessibilidade) -->
         <label for="meta-input">Sua Meta Diária</label>
         <!-- Campo para definir a capacidade/meta diária da garrafa -->
         <span class="input-wrapper">
@@ -107,7 +111,9 @@
 
         <!-- Inverte as cores da interface -->
         <button type="button" id="btn-tema">Inverter Cores</button>
-
+		
+		    <button type="button" id="btn-auth" onclick="window.signInWithGoogle()">Login com Google</button>
+		
         <!-- Link externo para o README do projeto no GitHub -->
         <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
           Manual / Sobre
@@ -503,9 +509,62 @@
   </svg>
   </main>
 
-  <!-- Script carregado no final do body para garantir que o DOM já existe -->
-  <script src="script.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { firebaseConfig } from './config.js';
 
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // Expõe ferramentas para o script.js
+  window.db = db;
+  window.auth = auth;
+  window.updateDoc = updateDoc;
+  window.doc = doc;
+  window.increment = increment;
+
+  // Funções de Login/Logout globais
+  window.fazerLogin = () => signInWithPopup(auth, provider).catch(console.error);
+  window.fazerLogout = () => signOut(auth);
+
+  // Observador de Autenticação
+  onAuthStateChanged(auth, (user) => {
+    const btnAuth = document.getElementById('btn-auth');
+    if (user) {
+      if(btnAuth) btnAuth.textContent = "Sair (Google)";
+      if(btnAuth) btnAuth.onclick = window.fazerLogout;
+      
+      // Sincronização em tempo real
+      const userRef = doc(db, "usuarios", user.uid);
+      onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const dados = docSnap.data();
+          window.totalBebido = dados.totalBebido || 0;
+          window.metaDiaria = dados.metaDiaria || 2000;
+          
+          // Atualiza o visual e os inputs
+          if (typeof window.atualizarVisual === 'function') window.atualizarVisual();
+          const inputMeta = document.getElementById('meta-input');
+          if (inputMeta) inputMeta.value = window.metaDiaria;
+        } else {
+          setDoc(userRef, { totalBebido: 0, metaDiaria: 2000 });
+        }
+      });
+    } else {
+      if(btnAuth) btnAuth.textContent = "Login com Google";
+      if(btnAuth) btnAuth.onclick = window.fazerLogin;
+      // Se deslogar, volta ao padrão
+      window.totalBebido = 0;
+      window.atualizarVisual();
+    }
+  });
+</script>
+
+<script src="script.js"></script>
 </body>
 
 </html>
