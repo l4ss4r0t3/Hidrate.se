@@ -126,7 +126,13 @@ if (inputMeta) {
 btnZerar.addEventListener('click', async () => {
     const user = window.auth?.currentUser;
 
-    if (confirm('Deseja encher a garrafa novamente?')) {
+    let confirmar = true;
+
+if (!(window.AndroidBridge)) {
+    confirmar = confirm('Deseja encher a garrafa novamente?');
+}
+
+if (confirmar) {
         if (user) {
             // Modo online: zera o campo totalBebido no Firestore
             const userRef = window.doc(window.db, "usuarios", user.uid);
