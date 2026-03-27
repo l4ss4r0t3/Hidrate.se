@@ -539,7 +539,7 @@
        ============================================================ -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { firebaseConfig } from './config.js';
 
@@ -567,11 +567,11 @@ getRedirectResult(auth).then((result) => {
 
     window.fazerLogin = () => {
     if (window.AndroidBridge) {
-        // Chama o login nativo do Android
+        // Dentro do app Android - usa login nativo
         window.AndroidBridge.iniciarLogin();
     } else {
-        // Fallback para navegador normal
-        signInWithRedirect(auth, provider);
+        // No navegador normal - usa popup como antes
+        signInWithPopup(auth, provider).catch(console.error);
     }
 };
 
