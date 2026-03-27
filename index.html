@@ -538,98 +538,179 @@
        window para que o script.js (não-módulo) possa acessá-las.
        ============================================================ -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, signInWithCredential } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { firebaseConfig } from './config.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { 
+    getAuth, 
+    GoogleAuthProvider, 
+    signInWithRedirect, 
+    getRedirectResult, 
+    onAuthStateChanged, 
+    signOut, 
+    signInWithCredential 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // Inicializa o app Firebase com as configurações do projeto
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+import { 
+    getFirestore, 
+    doc, 
+    onSnapshot, 
+    setDoc, 
+    updateDoc, 
+    increment 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Captura o resultado do redirect após o login ← ADICIONE AQUI
-getRedirectResult(auth).then((result) => {
-    if (result?.user) {
-        console.log("Logado com sucesso:", result.user.displayName);
-    }
-}).catch((error) => {
-    console.error("Erro no redirect:", error);
-});
+import { firebaseConfig } from './config.js';
 
-    // Expõe instâncias e funções do Firebase para o script.js
-    window.db = db;
-    window.auth = auth;
-    window.updateDoc = updateDoc;
-    window.doc = doc;
-    window.increment = increment;
+// 🔥 INIT
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-    window.fazerLogin = () => {
-    if (window.AndroidBridge) {
-        // Dentro do app Android - usa login nativo
-        window.AndroidBridge.iniciarLogin();
+// 🔥 GLOBAL
+let unsubscribe = null;
+
+// ======================================================
+// 🔐 LOGIN
+// ======================================================
+window.fazerLogin = () => {
+    if (window.AndroidBridge && AndroidBridge.iniciarLogin) {
+        AndroidBridge.iniciarLogin();
     } else {
-        // No navegador normal - usa popup como antes
-        signInWithPopup(auth, provider).catch(console.error);
+        signInWithRedirect(auth, provider).catch(console.error);
     }
 };
 
-window.receberTokenGoogle = (idToken) => {
-    const credential = GoogleAuthProvider.credential(idToken);
+// ======================================================
+// 🚪 LOGOUT
+// ======================================================
+window.fazerLogout = async () => {
+    try {
+        await signOut(auth);
 
-    signInWithCredential(auth, credential)
-        .then((result) => {
-            console.log("Logado:", result.user.displayName);
-        })
-        .catch((error) => {
-            console.error("Erro ao logar:", error);
-        });
+        if (window.AndroidBridge && AndroidBridge.fazerLogout) {
+            AndroidBridge.fazerLogout();
+        }
+
+        console.log("Logout completo");
+    } catch (error) {
+        console.error("Erro no logout:", error);
+    }
 };
 
-    // ============================================================
-    // OBSERVADOR DE AUTENTICAÇÃO
-    // Disparado automaticamente ao carregar a página e sempre que
-    // o estado de login muda (login, logout ou expiração de sessão).
-    // ============================================================
-    onAuthStateChanged(auth, (user) => {
-      const btnAuth = document.getElementById('btn-auth');
-      const authWarning = document.getElementById('auth-warning');
+// ======================================================
+// 📲 TOKEN ANDROID
+// ======================================================
+window.receberTokenGoogle = async (idToken) => {
+    try {
+        const credential = GoogleAuthProvider.credential(idToken);
+        const result = await signInWithCredential(auth, credential);
 
-      if (user) {
-        // Usuário logado: ajusta o botão e oculta o aviso de login
-        if (btnAuth) { btnAuth.textContent = "Sair (Google)"; btnAuth.onclick = window.fazerLogout; }
+        console.log("Login via Android:", result.user.displayName);
+    } catch (error) {
+        console.error("Erro login Android:", error);
+    }
+};
+
+// ======================================================
+// 🔁 REDIRECT RESULT
+// ======================================================
+getRedirectResult(auth)
+    .then((result) => {
+        if (result?.user) {
+            console.log("Login web:", result.user.displayName);
+        }
+    })
+    .catch(console.error);
+
+// ======================================================
+// 👀 AUTH STATE
+// ======================================================
+onAuthStateChanged(auth, (user) => {
+    const btnAuth = document.getElementById('btn-auth');
+    const authWarning = document.getElementById('auth-warning');
+
+    // 🔥 limpa listener antigo
+    if (unsubscribe) {
+        unsubscribe();
+        unsubscribe = null;
+    }
+
+    if (user) {
+        if (btnAuth) {
+            btnAuth.textContent = "Sair (Google)";
+            btnAuth.onclick = window.fazerLogout;
+        }
+
         if (authWarning) authWarning.style.display = 'none';
 
-        // Escuta mudanças em tempo real no documento do usuário no Firestore
-        const userRef = doc(db, "usuarios", user.uid);
-        onSnapshot(userRef, (docSnap) => {
-          if (docSnap.exists()) {
-            // Sincroniza estado local com os dados salvos na nuvem
+        escutarUsuario(user);
+
+    } else {
+        if (btnAuth) {
+            btnAuth.textContent = "Login com Google";
+            btnAuth.onclick = window.fazerLogin;
+        }
+
+        if (authWarning) authWarning.style.display = 'block';
+
+        resetarEstado();
+    }
+});
+
+// ======================================================
+// 🔥 FIRESTORE
+// ======================================================
+function escutarUsuario(user) {
+    const userRef = doc(db, "usuarios", user.uid);
+
+    unsubscribe = onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
             const dados = docSnap.data();
+
             window.totalBebido = dados.totalBebido || 0;
             window.metaDiaria = dados.metaDiaria || 2000;
 
-            // Atualiza o visual e o campo de meta na interface
-            if (typeof window.atualizarVisual === 'function') window.atualizarVisual();
-            const inputMeta = document.getElementById('meta-input');
-            if (inputMeta) inputMeta.value = window.metaDiaria;
-          } else {
-            // Primeiro acesso: cria o documento do usuário com valores padrão
-            setDoc(userRef, { totalBebido: 0, metaDiaria: 2000 });
-          }
-        });
-      } else {
-        // Usuário deslogado: restaura o botão e exibe o aviso de login
-        if (btnAuth) { btnAuth.textContent = "Login com Google"; btnAuth.onclick = window.fazerLogin; }
-        if (authWarning) authWarning.style.display = 'block';
+            atualizarUI();
 
-        // Reseta o estado local para os valores padrão
-        window.totalBebido = 0;
-        window.atualizarVisual();
-      }
+        } else {
+            setDoc(userRef, {
+                totalBebido: 0,
+                metaDiaria: 2000
+            });
+        }
     });
-  </script>
+}
+
+// ======================================================
+// 🎨 UI
+// ======================================================
+function atualizarUI() {
+    if (typeof window.atualizarVisual === 'function') {
+        window.atualizarVisual();
+    }
+
+    const inputMeta = document.getElementById('meta-input');
+    if (inputMeta) inputMeta.value = window.metaDiaria;
+}
+
+function resetarEstado() {
+    window.totalBebido = 0;
+
+    if (typeof window.atualizarVisual === 'function') {
+        window.atualizarVisual();
+    }
+}
+
+// ======================================================
+// 🌍 EXPOSIÇÃO GLOBAL
+// ======================================================
+window.db = db;
+window.auth = auth;
+window.updateDoc = updateDoc;
+window.doc = doc;
+window.increment = increment;
+
+</script>
 
   <!-- Script principal: lógica da garrafa, menu e tema -->
   <script src="script.js"></script>
