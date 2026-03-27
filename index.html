@@ -542,7 +542,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { 
     getAuth, 
     GoogleAuthProvider, 
-    signInWithRedirect, 
+    signInWithPopup, 
     getRedirectResult, 
     onAuthStateChanged, 
     signOut, 
@@ -576,7 +576,7 @@ window.fazerLogin = () => {
     if (window.AndroidBridge && AndroidBridge.iniciarLogin) {
         AndroidBridge.iniciarLogin();
     } else {
-        signInWithRedirect(auth, provider).catch(console.error);
+        signInWithPopup(auth, provider).catch(console.error);
     }
 };
 
