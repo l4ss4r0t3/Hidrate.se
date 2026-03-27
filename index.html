@@ -539,7 +539,7 @@
        ============================================================ -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, signInWithCredential } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { firebaseConfig } from './config.js';
 
@@ -576,11 +576,15 @@ getRedirectResult(auth).then((result) => {
 };
 
 window.receberTokenGoogle = (idToken) => {
-    const { GoogleAuthProvider, signInWithCredential } = firebase_auth_module;
     const credential = GoogleAuthProvider.credential(idToken);
+
     signInWithCredential(auth, credential)
-        .then(result => console.log("Logado:", result.user.displayName))
-        .catch(err => console.error("Erro:", err));
+        .then((result) => {
+            console.log("Logado:", result.user.displayName);
+        })
+        .catch((error) => {
+            console.error("Erro ao logar:", error);
+        });
 };
 
     // ============================================================
