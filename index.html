@@ -539,7 +539,7 @@
        ============================================================ -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { firebaseConfig } from './config.js';
 
@@ -549,6 +549,15 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
+// Captura o resultado do redirect após o login ← ADICIONE AQUI
+getRedirectResult(auth).then((result) => {
+    if (result?.user) {
+        console.log("Logado com sucesso:", result.user.displayName);
+    }
+}).catch((error) => {
+    console.error("Erro no redirect:", error);
+});
+
     // Expõe instâncias e funções do Firebase para o script.js
     window.db = db;
     window.auth = auth;
@@ -557,7 +566,7 @@
     window.increment = increment;
 
     // Funções de login e logout acessíveis globalmente
-    window.fazerLogin = () => signInWithPopup(auth, provider).catch(console.error);
+    window.fazerLogin = () => signInWithRedirect(auth, provider);
     window.fazerLogout = () => signOut(auth);
 
     // ============================================================
