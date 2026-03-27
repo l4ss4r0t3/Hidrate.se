@@ -565,9 +565,23 @@ getRedirectResult(auth).then((result) => {
     window.doc = doc;
     window.increment = increment;
 
-    // Funções de login e logout acessíveis globalmente
-    window.fazerLogin = () => signInWithRedirect(auth, provider);
-    window.fazerLogout = () => signOut(auth);
+    window.fazerLogin = () => {
+    if (window.AndroidBridge) {
+        // Chama o login nativo do Android
+        window.AndroidBridge.iniciarLogin();
+    } else {
+        // Fallback para navegador normal
+        signInWithRedirect(auth, provider);
+    }
+};
+
+window.receberTokenGoogle = (idToken) => {
+    const { GoogleAuthProvider, signInWithCredential } = firebase_auth_module;
+    const credential = GoogleAuthProvider.credential(idToken);
+    signInWithCredential(auth, credential)
+        .then(result => console.log("Logado:", result.user.displayName))
+        .catch(err => console.error("Erro:", err));
+};
 
     // ============================================================
     // OBSERVADOR DE AUTENTICAÇÃO
