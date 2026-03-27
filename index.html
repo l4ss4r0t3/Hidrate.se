@@ -60,8 +60,8 @@
   <section id="app-purpose" style="display: none; text-align: center; padding: 40px 20px; background-color: #f0f8ff; border-radius: 20px; margin: 20px;">
     <h2 style="color: #1976D2; font-size: 2rem; margin-bottom: 10px;">Mantenha sua saúde em dia com o Hidrate.se</h2>
     <p style="color: #555; font-size: 1.1rem; max-width: 600px; margin: 0 auto 20px auto;">
-        O **Hidrate.se** é um rastreador de água inteligente projetado para ajudar você a atingir suas metas de hidratação diária. 
-        Calcule sua meta, registre cada copo de água e acompanhe seu progresso em tempo real com salvamento automático na nuvem.
+        O <strong>Hidrate.se</strong> é um rastreador de água inteligente projetado para ajudar você a atingir suas metas de hidratação diária. 
+Calcule sua meta, registre cada copo de água e acompanhe seu progresso em tempo real com salvamento automático na nuvem.
     </p>
   </section>
 
@@ -105,7 +105,7 @@
         <!-- Campo para definir a meta diária de consumo de água (em ml) -->
         <span class="input-wrapper">
           <span class="input-prefix">Meta(ml)</span>
-          <input type="number" inputmode="numeric" id="meta-input" value="2000">
+          <input type="number" inputmode="numeric" id="meta-input" value="2000" min="1">
         </span>
 
         <!-- Label para auxiliar leitores de tela (acessibilidade) -->
@@ -113,7 +113,7 @@
         <!-- Campo para digitar a quantidade de água a ser registrada (em ml) -->
         <span class="input-wrapper">
           <span class="input-prefix">Qtd.(ml)</span>
-          <input type="number" inputmode="numeric" id="ml-input">
+          <input type="number" inputmode="numeric" id="ml-input" min="0">
         </span>
 
         <!-- Registra a quantidade bebida e diminui o nível da garrafa -->
