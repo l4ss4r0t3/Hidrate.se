@@ -1,54 +1,3 @@
-/* Importa a fonte Google Sans do Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
-
-/* =============================================================
-   RESET GLOBAL
-   Faz todos os elementos incluírem borda e padding no cálculo
-   de largura/altura, evitando estouros de layout.
-   ============================================================= */
-* {
-    box-sizing: border-box;
-}
-
-/* =============================================================
-   HTML E BODY
-   Define o tamanho, fonte padrão, cor de fundo e
-   a transição suave para a troca de tema.
-   overflow: hidden impede o scroll — a garrafa ocupa a tela toda.
-   ============================================================= */
-html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-
-    font-family: "Google Sans", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    font-variation-settings: "GRAD" 0;
-
-    background-color: white;
-    transition: filter 0.5s ease, background-color 0.5s ease; /* Suaviza a troca de tema */
-}
-
-/* =============================================================
-   TEMA ALTERNATIVO (INVERSÃO DE CORES)
-   Inverte todas as cores do body com filtro CSS.
-   hue-rotate(180deg) garante que as cores fiquem naturais
-   após a inversão (ex: o azul da água não vira laranja).
-   ============================================================= */
-body.alt-theme {
-    filter: invert(100%) hue-rotate(180deg);
-}
-
-/* O menu recebe uma inversão dupla para cancelar a herança do body,
-   mantendo suas cores originais mesmo com o tema ativo. */
-body.alt-theme .dropdown-content {
-    filter: invert(100%) hue-rotate(180deg);
-}
-
 /* =============================================================
    CONTAINER DO DROPDOWN
    Posicionamento relativo para que o menu absoluto
@@ -92,7 +41,7 @@ body.alt-theme .dropdown-content {
     cursor: pointer;
 }
 
-.dropbtn svg {
+.dropbtn img {
     width: 70px;
     height: 70px;
 }
@@ -158,6 +107,28 @@ body.alt-theme .dropdown-content {
     font-family: "Google Sans", sans-serif;
 }
 
+/* Centraliza o texto dentro dos campos de input de meta e quantidade */
+#meta-input,
+#ml-input {
+    text-align: center;
+}
+
+/* =============================================================
+   REMOVE SETAS DOS INPUTS NUMÉRICOS
+   Melhora a aparência dos campos type="number" no Chrome (webkit)
+   e no Firefox (moz), tornando-os visualmente mais limpos.
+   ============================================================= */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; /* Para Firefox */
+    appearance: none;           /* Propriedade padrão moderna */
+}
+
 /* =============================================================
    WRAPPER DOS INPUTS COM PREFIXO
    Usa flexbox para alinhar verticalmente o rótulo interno
@@ -183,72 +154,4 @@ body.alt-theme .dropdown-content {
 /* Empurra o valor digitado para a direita, evitando sobreposição com o prefixo */
 .input-wrapper input {
     padding-left: 40px;
-}
-
-/* =============================================================
-   CONTAINER DA GARRAFA
-   Ocupa toda a tela e centraliza o SVG da garrafa.
-   pointer-events: none garante que cliques passem através dela
-   e atinjam elementos embaixo (como o botão do menu).
-   ============================================================= */
-.garrafa {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1; /* Fica atrás do menu dropdown */
-    pointer-events: none;
-}
-
-/* O SVG ocupa 90% da altura da tela, mantendo a proporção original */
-.garrafa svg {
-    width: auto;
-    height: 90%;
-    margin: auto;
-}
-
-/* Centraliza o texto dentro dos campos de input de meta e quantidade */
-#meta-input,
-#ml-input {
-    text-align: center;
-}
-
-/* =============================================================
-   MODO PAISAGEM (LANDSCAPE)
-   Quando o celular está deitado, a garrafa é rotacionada -90deg
-   para aproveitar melhor o espaço horizontal.
-   height e width são trocados proporcionalmente ao novo eixo.
-   ============================================================= */
-@media (orientation: landscape) {
-    .garrafa svg {
-        transform: rotate(-90deg);
-
-        height: 90vw; /* 90vw como nova "altura" da garrafa deitada */
-        width: 80vh;  /* 80vh controla a "largura" em relação à altura da tela */
-
-        max-width: 100%;
-        max-height: 100%;
-
-        transition: all 0.5s ease;
-    }
-}
-
-/* =============================================================
-   REMOVE SETAS DOS INPUTS NUMÉRICOS
-   Melhora a aparência dos campos type="number" no Chrome (webkit)
-   e no Firefox (moz), tornando-os visualmente mais limpos.
-   ============================================================= */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type="number"] {
-    -moz-appearance: textfield; /* Para Firefox */
-    appearance: none;           /* Propriedade padrão moderna */
 }

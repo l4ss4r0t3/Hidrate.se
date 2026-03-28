@@ -1,0 +1,13 @@
+<svg
+          width="7mm"
+          height="7mm"
+          viewBox="0 0 7 7"
+          preserveAspectRatio="xMidYMid meet"
+          version="1.1"
+          id="svg-menu"
+          xmlns="http://www.w3.org/2000/svg">
+          <!-- Três barras horizontais que formam o ícone hambúrguer -->
+          <rect style="fill:black;stroke-width:0" width="5" height="1" x="1" y="1" />
+          <rect style="fill:black;stroke-width:0" width="5" height="1" x="1" y="3" />
+          <rect style="fill:black;stroke-width:0" width="5" height="1" x="1" y="5" />
+        </svg>

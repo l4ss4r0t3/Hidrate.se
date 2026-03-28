@@ -1,0 +1,25 @@
+/* =============================================================
+   CONTAINER DA GARRAFA
+   Ocupa toda a tela e centraliza o SVG da garrafa.
+   pointer-events: none garante que cliques passem através dela
+   e atinjam elementos embaixo (como o botão do menu).
+   ============================================================= */
+.garrafa {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1; /* Fica atrás do menu dropdown */
+    pointer-events: none;
+}
+
+/* O SVG ocupa 90% da altura da tela, mantendo a proporção original */
+.garrafa object {
+    width: auto;
+    height: 90%;
+    margin: auto;
+}

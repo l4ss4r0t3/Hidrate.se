@@ -1,0 +1,74 @@
+/* =============================================================
+   RESET GLOBAL
+   Faz todos os elementos incluírem borda e padding no cálculo
+   de largura/altura, evitando estouros de layout.
+   ============================================================= */
+* {
+    box-sizing: border-box;
+}
+
+/* =============================================================
+   HTML E BODY
+   Define o tamanho, fonte padrão, cor de fundo e
+   a transição suave para a troca de tema.
+   overflow: hidden impede o scroll — a garrafa ocupa a tela toda.
+   ============================================================= */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    font-family: "Google Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "GRAD" 0;
+
+    background-color: white;
+    transition: filter 0.5s ease, background-color 0.5s ease; /* Suaviza a troca de tema */
+}
+
+/* =============================================================
+   TEMA ALTERNATIVO (INVERSÃO DE CORES)
+   Inverte todas as cores do body com filtro CSS.
+   hue-rotate(180deg) garante que as cores fiquem naturais
+   após a inversão (ex: o azul da água não vira laranja).
+   ============================================================= */
+body.alt-theme {
+    filter: invert(100%) hue-rotate(180deg);
+}
+
+/* O menu recebe uma inversão dupla para cancelar a herança do body,
+   mantendo suas cores originais mesmo com o tema ativo. */
+body.alt-theme .dropdown-content {
+    filter: invert(100%) hue-rotate(180deg);
+}
+
+.text {
+    text-align: center;
+    padding: 20px;
+    max-width: 720px;
+    height: 100vh;
+    overflow-y: auto;
+    margin: 0 auto;
+    line-height: 1.6;
+    color: #333;
+    box-sizing: border-box;
+    scrollbar-width: none; /* Firefox */
+}
+
+.text::-webkit-scrollbar {
+  display: none; /* Chrome, Safari e Edge */
+}
+
+.text-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #000000;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
