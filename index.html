@@ -218,192 +218,282 @@
        para permitir acesso pelos scripts externos (bottles.js).
        ============================================================ -->
   <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { 
-    getAuth, 
-    GoogleAuthProvider, 
-    signInWithPopup,
-    signInWithRedirect,
-    getRedirectResult, 
-    onAuthStateChanged, 
-    signOut, 
-    signInWithCredential 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    // ========================================================
+    // 📦 IMPORTAÇÕES FIREBASE SDK (v10.8.0)
+    // Módulos importados via CDN para evitar build local
+    // ========================================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+        getAuth, 
+        GoogleAuthProvider, 
+        signInWithPopup, 
+        getRedirectResult, 
+        onAuthStateChanged, 
+        signOut, 
+        signInWithCredential 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-import { 
-    getFirestore, 
-    doc, 
-    onSnapshot, 
-    setDoc, 
-    updateDoc, 
-    increment 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+        getFirestore, 
+        doc, 
+        onSnapshot, 
+        setDoc, 
+        updateDoc, 
+        increment 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-import { firebaseConfig } from './scripts/config.js';
+    // Importa as credenciais do Firebase do arquivo de config
+    import { firebaseConfig } from './scripts/config.js';
 
-// 🔥 INIT
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
+    // ========================================================
+    // 🔥 INICIALIZAÇÃO DO FIREBASE
+    // Instancia os serviços de autenticação e banco de dados
+    // ========================================================
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);                    // Serviço de autenticação
+    const db = getFirestore(app);                 // Banco de dados Firestore
+    const provider = new GoogleAuthProvider();    // Provedor Google OAuth
 
-let unsubscribe = null;
+    // ========================================================
+    // 📡 VARIÁVEL DE CONTROLE DO LISTENER
+    // Armazena a função de cancelamento do onSnapshot para
+    // evitar múltiplos listeners simultâneos ao trocar usuário
+    // ========================================================
+    let unsubscribe = null;
 
-// ======================================================
-// 🔐 LOGIN
-// ======================================================
-window.fazerLogin = () => {
-    // 📱 ANDROID APP
-    if (window.AndroidBridge && AndroidBridge.iniciarLogin) {
-        AndroidBridge.iniciarLogin();
-        return;
-    }
-
-    // 🌐 WEB
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isMobile) {
-        // Mobile → redirect (mais confiável)
-        signInWithRedirect(auth, provider).catch(console.error);
-    } else {
-        // Desktop → popup (com fallback)
-        signInWithPopup(auth, provider).catch((error) => {
-            console.warn("Popup falhou, tentando redirect...", error);
-            signInWithRedirect(auth, provider).catch(console.error);
-        });
-    }
-};
-
-// ======================================================
-// 🚪 LOGOUT
-// ======================================================
-window.fazerLogout = async () => {
-    try {
-        await signOut(auth);
-
-        if (window.AndroidBridge && AndroidBridge.fazerLogout) {
-            AndroidBridge.fazerLogout();
+    // ========================================================
+    // 🔐 FUNÇÃO: FAZER LOGIN
+    // Gerencia login tanto no navegador web quanto no app Android.
+    // 
+    // WEB: Abre popup de autenticação Google
+    // ANDROID: Chama método nativo via JavaScriptInterface
+    // ========================================================
+    window.fazerLogin = () => {
+        // Verifica se está rodando no app Android
+        if (window.AndroidBridge && AndroidBridge.iniciarLogin) {
+            AndroidBridge.iniciarLogin();  // Chama método nativo
+        } else {
+            // Login via popup no navegador web
+            signInWithPopup(auth, provider).catch(console.error);
         }
+    };
 
-        console.log("Logout completo");
-    } catch (error) {
-        console.error("Erro no logout:", error);
-    }
-};
+    // ========================================================
+    // 🚪 FUNÇÃO: FAZER LOGOUT
+    // Desloga o usuário e limpa os dados armazenados.
+    // Se estiver no Android, também limpa o token nativo.
+    // ========================================================
+    window.fazerLogout = async () => {
+        try {
+            await signOut(auth);  // Desloga do Firebase
 
-// ======================================================
-// 📲 TOKEN ANDROID
-// ======================================================
-window.receberTokenGoogle = async (idToken) => {
-    try {
-        const credential = GoogleAuthProvider.credential(idToken);
-        const result = await signInWithCredential(auth, credential);
+            // Se estiver no Android, limpa token nativo também
+            if (window.AndroidBridge && AndroidBridge.fazerLogout) {
+                AndroidBridge.fazerLogout();
+            }
 
-        console.log("Login via Android:", result.user.displayName);
-    } catch (error) {
-        console.error("Erro login Android:", error);
-    }
-};
-
-// ======================================================
-// 🔁 REDIRECT RESULT (IMPORTANTE)
-// ======================================================
-getRedirectResult(auth)
-    .then((result) => {
-        if (result?.user) {
-            console.log("Login web:", result.user.displayName);
+            console.log("Logout completo");
+        } catch (error) {
+            console.error("Erro no logout:", error);
         }
-    })
-    .catch(console.error);
+    };
 
-// ======================================================
-// 👀 AUTH STATE
-// ======================================================
-onAuthStateChanged(auth, (user) => {
+    // ========================================================
+    // 📲 FUNÇÃO: RECEBER TOKEN DO ANDROID
+    // Chamada pelo app Android após login nativo bem-sucedido.
+    // Converte o idToken do Google em credencial Firebase.
+    // ========================================================
+    window.receberTokenGoogle = async (idToken) => {
+        try {
+            // Cria credencial Firebase a partir do token Google
+            const credential = GoogleAuthProvider.credential(idToken);
+            const result = await signInWithCredential(auth, credential);
+
+            console.log("Login via Android:", result.user.displayName);
+        } catch (error) {
+            console.error("Erro login Android:", error);
+        }
+    };
+
+    // ========================================================
+    // 🔁 VERIFICAÇÃO DE REDIRECT (WEB)
+    // Verifica se houve retorno de login por redirecionamento.
+    // Útil para alguns fluxos de autenticação mais antigos.
+    // ========================================================
+    getRedirectResult(auth)
+        .then((result) => {
+            if (result?.user) {
+                console.log("Login web:", result.user.displayName);
+            }
+        })
+        .catch(console.error);
+
+    // ========================================================
+    // 👀 OBSERVADOR DE ESTADO DE AUTENTICAÇÃO
+    // ATUALIZADO: Gerencia transições offline ↔ online
+    // ========================================================
+    onAuthStateChanged(auth, (user) => {
     const btnAuth = document.getElementById('btn-auth');
     const authWarning = document.getElementById('auth-warning');
-
+ 
+    // Limpa listener anterior
     if (unsubscribe) {
         unsubscribe();
         unsubscribe = null;
     }
-
+ 
     if (user) {
+        // ================================================
+        // ✅ USUÁRIO LOGADO (Offline → Online)
+        // ================================================
+        
         if (btnAuth) {
             btnAuth.textContent = "Sair (Google)";
             btnAuth.onclick = window.fazerLogout;
         }
-
+ 
         if (authWarning) authWarning.style.display = 'none';
-
+ 
+        // 🔄 NÃO limpa localStorage aqui - deixa escutarUsuario fazer isso
+        // após migrar os dados para o Firebase
+ 
+        // Inicia sincronização (migração acontece dentro)
         escutarUsuario(user);
-
+ 
     } else {
+        // ================================================
+        // ❌ USUÁRIO DESLOGADO (Online → Offline)
+        // ================================================
+        
         if (btnAuth) {
             btnAuth.textContent = "Login com Google";
             btnAuth.onclick = window.fazerLogin;
         }
-
+ 
         if (authWarning) authWarning.style.display = 'block';
-
+ 
+        // 💾 Salva estado atual no localStorage antes de resetar
+        if (window.totalBebido > 0 || window.metaDiaria !== 2000) {
+            if (typeof window.salvarNoLocalStorage === 'function') {
+                window.salvarNoLocalStorage();
+                console.log('💾 Dados salvos no localStorage ao deslogar');
+            }
+        }
+ 
+        // Carrega dados do localStorage (se houver)
+        if (typeof window.carregarDoLocalStorage === 'function') {
+            window.carregarDoLocalStorage();
+        }
+ 
+        // Atualiza UI
         resetarEstado();
     }
-});
+    });
 
-// ======================================================
-// 🔥 FIRESTORE
-// ======================================================
-function escutarUsuario(user) {
+    // ========================================================
+    // 🔥 FIRESTORE - SINCRONIZAÇÃO BIDIRECIONAL COM LOCALSTORAGE
+    // Versão melhorada que transfere dados entre offline/online
+    // ========================================================
+ 
+    /**
+    * Escuta mudanças no documento do usuário no Firestore
+    * ATUALIZADO: Migra dados do localStorage ao fazer login
+    */
+    function escutarUsuario(user) {
     const userRef = doc(db, "usuarios", user.uid);
-
-    unsubscribe = onSnapshot(userRef, (docSnap) => {
+ 
+        unsubscribe = onSnapshot(userRef, (docSnap) => {
         if (docSnap.exists()) {
+            // ================================================
+            // ✅ DOCUMENTO EXISTE - Usuário já tinha conta
+            // ================================================
             const dados = docSnap.data();
-
+ 
             window.totalBebido = dados.totalBebido || 0;
             window.metaDiaria = dados.metaDiaria || 2000;
-
+ 
             atualizarUI();
-
+ 
         } else {
-            setDoc(userRef, {
+            // ================================================
+            // 🆕 DOCUMENTO NÃO EXISTE - Primeira vez logando
+            // Verifica se há dados do localStorage para migrar
+            // ================================================
+            
+            const dadosLocal = localStorage.getItem('hidratese_dados');
+            let dadosIniciais = {
                 totalBebido: 0,
                 metaDiaria: 2000
-            });
+            };
+ 
+            if (dadosLocal) {
+                try {
+                    const dadosParsed = JSON.parse(dadosLocal);
+                    
+                    // 🔄 MIGRAÇÃO: Usa dados do localStorage como ponto de partida
+                    dadosIniciais = {
+                        totalBebido: dadosParsed.totalBebido || 0,
+                        metaDiaria: dadosParsed.metaDiaria || 2000
+                    };
+                    
+                    console.log('📤 Migrando dados do localStorage para Firebase:', dadosIniciais);
+                } catch (e) {
+                    console.error('Erro ao migrar localStorage:', e);
+                }
+            }
+ 
+            // Cria documento com dados migrados (ou padrão se não houver)
+            setDoc(userRef, dadosIniciais);
+            
+            // 🧹 Agora pode limpar localStorage com segurança
+            if (typeof window.limparLocalStorage === 'function') {
+                window.limparLocalStorage();
+            }
         }
     });
-}
+    }
 
-// ======================================================
-// 🎨 UI
-// ======================================================
-function atualizarUI() {
+    // ========================================================
+    // 🎨 FUNÇÃO: ATUALIZAR INTERFACE (UI)
+    // Mantém igual
+    // ========================================================
+    function atualizarUI() {
     if (typeof window.atualizarVisual === 'function') {
         window.atualizarVisual();
     }
-
+ 
     const inputMeta = document.getElementById('meta-input');
     if (inputMeta) inputMeta.value = window.metaDiaria;
-}
+    }
 
-function resetarEstado() {
-    window.totalBebido = 0;
-
+    // ========================================================
+    // 🔄 FUNÇÃO: RESETAR ESTADO
+    // Atualizado para usar dados já carregados do localStorage
+    // ========================================================
+    function resetarEstado() {
+    // NÃO reseta para 0 - mantém o que foi carregado do localStorage
+    
     if (typeof window.atualizarVisual === 'function') {
         window.atualizarVisual();
     }
-}
+    
+    // Atualiza campo de meta com valor atual
+    const inputMeta = document.getElementById('meta-input');
+    if (inputMeta) inputMeta.value = window.metaDiaria;
+    }
 
-// ======================================================
-// 🌍 GLOBAL
-// ======================================================
-window.db = db;
-window.auth = auth;
-window.updateDoc = updateDoc;
-window.doc = doc;
-window.increment = increment;
+    // ========================================================
+    // 🌍 EXPOSIÇÃO GLOBAL
+    // Torna as instâncias Firebase acessíveis aos scripts
+    // externos que não são módulos ES6 (bottles.js, etc.)
+    // ========================================================
+    window.db = db;                  // Instância do Firestore
+    window.auth = auth;              // Instância do Auth
+    window.updateDoc = updateDoc;    // Função de atualização
+    window.doc = doc;                // Função de referência de documento
+    window.increment = increment;    // Operador de incremento atômico
 
-</script>
+  </script>
 
   <!-- ============================================================
        📜 SCRIPTS EXTERNOS (LÓGICA DA APLICAÇÃO)
