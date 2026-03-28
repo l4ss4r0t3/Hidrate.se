@@ -149,7 +149,6 @@ btnBeber.addEventListener('click', async () => {
             salvarNoLocalStorage();  // 🆕 SALVA NO LOCALSTORAGE
             window.atualizarVisual();
         }
-        inputMl.value = ''; // Limpa o campo após registrar
         fecharMenuCelular();
     }
 });

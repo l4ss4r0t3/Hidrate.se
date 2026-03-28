@@ -48,3 +48,34 @@ if (btnTema) {
         localStorage.setItem('temaEscuro', document.body.classList.contains('alt-theme'));
     });
 }
+
+function setupMlInput() {
+    const input = document.getElementById("ml-input");
+
+    if (!input) return;
+    if (input.dataset.loaded) return;
+
+    input.dataset.loaded = "true";
+
+    const valorSalvo = localStorage.getItem("ml-input");
+    if (valorSalvo) {
+        input.value = valorSalvo;
+    }
+
+    input.addEventListener("input", (e) => {
+        localStorage.setItem("ml-input", e.target.value);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", setupMlInput);
+
+const observer = new MutationObserver(() => {
+    if (document.getElementById("ml-input")) {
+        setupMlInput();
+    }
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
