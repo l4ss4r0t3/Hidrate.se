@@ -269,14 +269,14 @@
     // ANDROID: Chama método nativo via JavaScriptInterface
     // ========================================================
     window.fazerLogin = () => {
-        // Verifica se está rodando no app Android
-        if (window.AndroidBridge && AndroidBridge.iniciarLogin) {
-            AndroidBridge.iniciarLogin();  // Chama método nativo
-        } else {
-            // Login via popup no navegador web
-            signInWithPopup(auth, provider).catch(console.error);
-        }
-    };
+    // 📱 ANDROID APP (WebView)
+    if (window.AndroidBridge && AndroidBridge.iniciarLogin) {
+        AndroidBridge.iniciarLogin();
+    } else {
+        // 🌐 NAVEGADOR
+        signInWithRedirect(auth, provider).catch(console.error);
+    }
+};
 
     // ========================================================
     // 🚪 FUNÇÃO: FAZER LOGOUT
