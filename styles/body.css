@@ -1,5 +1,15 @@
 /* =============================================================
-   RESET GLOBAL
+   🎨 BODY.CSS - ESTILOS GLOBAIS E TEMA
+   =============================================================
+   Este arquivo define:
+   - Reset global para consistência entre navegadores
+   - Estilos base do HTML e BODY
+   - Sistema de tema claro/escuro
+   - Estilos para páginas de texto/políticas
+   ============================================================= */
+
+/* =============================================================
+   🔄 RESET GLOBAL
    Faz todos os elementos incluírem borda e padding no cálculo
    de largura/altura, evitando estouros de layout.
    ============================================================= */
@@ -8,7 +18,7 @@
 }
 
 /* =============================================================
-   HTML E BODY
+   📄 HTML E BODY - ESTILOS BASE
    Define o tamanho, fonte padrão, cor de fundo e
    a transição suave para a troca de tema.
    overflow: hidden impede o scroll — a garrafa ocupa a tela toda.
@@ -20,21 +30,27 @@ html, body {
     padding: 0;
     overflow: hidden;
 
+    /* Fonte padrão do Google */
     font-family: "Google Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
     font-variation-settings: "GRAD" 0;
 
+    /* Cor de fundo padrão (tema claro) */
     background-color: white;
-    transition: filter 0.5s ease, background-color 0.5s ease; /* Suaviza a troca de tema */
+    
+    /* Transição suave ao alternar temas */
+    transition: filter 0.5s ease, background-color 0.5s ease;
 }
 
 /* =============================================================
-   TEMA ALTERNATIVO (INVERSÃO DE CORES)
+   🌓 TEMA ALTERNATIVO (MODO ESCURO)
    Inverte todas as cores do body com filtro CSS.
    hue-rotate(180deg) garante que as cores fiquem naturais
    após a inversão (ex: o azul da água não vira laranja).
+   
+   Ativado pela classe 'alt-theme' no body.
    ============================================================= */
 body.alt-theme {
     filter: invert(100%) hue-rotate(180deg);
@@ -46,23 +62,33 @@ body.alt-theme .dropdown-content {
     filter: invert(100%) hue-rotate(180deg);
 }
 
+/* =============================================================
+   📝 CONTAINER DE TEXTO
+   Usado nas páginas de políticas (privacy.html, service.html, etc)
+   Centraliza o conteúdo com scroll vertical
+   ============================================================= */
 .text {
     text-align: center;
     padding: 20px;
     max-width: 720px;
     height: 100vh;
-    overflow-y: auto;
-    margin: 0 auto;
+    overflow-y: auto;          /* Permite scroll vertical */
+    margin: 0 auto;            /* Centraliza horizontalmente */
     line-height: 1.6;
     color: #333;
     box-sizing: border-box;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;     /* Oculta scrollbar no Firefox */
 }
 
+/* Oculta scrollbar no Chrome, Safari e Edge */
 .text::-webkit-scrollbar {
-  display: none; /* Chrome, Safari e Edge */
+  display: none;
 }
 
+/* =============================================================
+   🔘 BOTÃO DE TEXTO
+   Estilo para botões dentro de páginas de texto/políticas
+   ============================================================= */
 .text-button {
     display: inline-block;
     padding: 10px 20px;
@@ -71,4 +97,17 @@ body.alt-theme .dropdown-content {
     text-decoration: none;
     border-radius: 4px;
     transition: background-color 0.3s ease;
+}
+
+/* =============================================================
+   🎭 OVERLAY ESCURO
+   Camada semi-transparente atrás da garrafa
+   Melhora o contraste da garrafa sobre fundos personalizados
+   ============================================================= */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;                         /* Cobre toda a tela */
+  background: rgba(0,0,0,0.3);      /* Preto 30% opaco */
+  z-index: -1;                      /* Fica atrás de tudo */
 }

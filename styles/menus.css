@@ -1,5 +1,15 @@
 /* =============================================================
-   CONTAINER DO DROPDOWN
+   📋 MENUS.CSS - ESTILOS DO MENU DROPDOWN E SUBMENUS
+   =============================================================
+   Este arquivo define:
+   - Posicionamento do menu dropdown principal
+   - Estilos dos inputs e botões internos
+   - Submenus expansíveis (Temas, Políticas)
+   - Comportamento responsivo
+   ============================================================= */
+
+/* =============================================================
+   🎯 CONTAINER DO DROPDOWN
    Posicionamento relativo para que o menu absoluto
    se posicione corretamente dentro dele.
    float: right empurra o menu para o canto superior direito.
@@ -7,36 +17,39 @@
    ============================================================= */
 .dropdown {
     position: relative;
-    float: right;
-    z-index: 20;
+    float: right;              /* Posiciona no canto superior direito */
+    z-index: 20;               /* Acima da garrafa (z-index: 1) */
 }
 
 /* =============================================================
-   CONTEÚDO DO MENU SUSPENSO
-   Oculto por padrão. A visibilidade é controlada pelo script.js
-   via menu.style.display — não pelo CSS (evita conflitos no mobile).
+   📜 CONTEÚDO DO MENU SUSPENSO
+   Oculto por padrão. A visibilidade é controlada pelo buttons.js
+   via menu.style.display — NÃO pelo CSS (evita conflitos no mobile).
    max-height + overflow-y: auto permitem scroll se houver muitos itens.
    ============================================================= */
 .dropdown-content {
-    display: none; /* Estado inicial: fechado */
+    display: none;             /* Estado inicial: fechado */
     position: absolute;
-    right: 10px;
+    right: 10px;               /* Alinhado à direita */
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 10;
 
-    max-height: 60vh; /* O menu ocupa no máximo 60% da altura da tela */
-    overflow-y: auto; /* Ativa o scroll apenas se houver muitos itens */
-    scrollbar-width: none;
+    /* Limita altura e adiciona scroll se necessário */
+    max-height: 60vh;          /* Ocupa no máximo 60% da altura da tela */
+    overflow-y: auto;          /* Ativa scroll apenas se houver muitos itens */
+    overflow: visible;         /* Permite submenus saírem do container */
+    scrollbar-width: none;     /* Oculta scrollbar no Firefox */
 }
 
+/* Oculta scrollbar no Chrome, Safari e Edge */
 .dropdown-content::-webkit-scrollbar {
   display: none;
 }
 
 /* =============================================================
-   BOTÃO DO MENU (ÍCONE HAMBÚRGUER)
+   🍔 BOTÃO DO MENU (ÍCONE HAMBÚRGUER)
    Remove estilos padrão do botão para parecer apenas um ícone.
    ============================================================= */
 .dropbtn {
@@ -52,7 +65,7 @@
 }
 
 /* =============================================================
-   INPUTS E BOTÕES DENTRO DO MENU
+   🎛️ INPUTS E BOTÕES DENTRO DO MENU
    Estilo unificado para manter consistência visual entre
    todos os controles do dropdown.
    ============================================================= */
@@ -65,6 +78,7 @@
     border: none;
     cursor: pointer;
 
+    /* Fonte padrão do app */
     font-family: "Google Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
@@ -72,8 +86,11 @@
     font-variation-settings: "GRAD" 0;
 }
 
-/* Labels dos inputs: exibidos em bloco para ocupar a largura
-   total e criar separação visual entre os campos. */
+/* =============================================================
+   🏷️ LABELS DOS INPUTS
+   Exibidos em bloco para ocupar a largura total e criar
+   separação visual entre os campos.
+   ============================================================= */
 .dropdown-content label {
     display: block;
     background-color: white;
@@ -83,10 +100,13 @@
 
     font-family: "Google Sans", sans-serif;
     font-size: 14px;
-    cursor: default;
+    cursor: default;           /* Cursor normal (não pointer) */
 }
 
-/* Efeito hover nos botões e no link do manual */
+/* =============================================================
+   ✨ EFEITO HOVER
+   Destaque ao passar o mouse sobre botões e links
+   ============================================================= */
 .dropdown-content button:hover,
 .menu-link:hover {
     background-color: black;
@@ -95,9 +115,9 @@
 }
 
 /* =============================================================
-   LINK DO MANUAL (E OUTROS LINKS DO MENU)
-   Estilizado para parecer um botão igual aos demais do menu,
-   mantendo consistência visual mesmo sendo uma tag <a>.
+   🔗 LINKS DO MENU
+   Estilizados para parecer botões, mantendo consistência
+   visual mesmo sendo tags <a>.
    ============================================================= */
 .menu-link {
     display: block;
@@ -112,14 +132,25 @@
     font-family: "Google Sans", sans-serif;
 }
 
-/* Centraliza o texto dentro dos campos de input de meta e quantidade */
+/* =============================================================
+   👁️ CLASSE DE VISIBILIDADE
+   Usada pelo JavaScript para mostrar/ocultar elementos
+   ============================================================= */
+.dropdown-content.show {
+  display: block;
+}
+
+/* =============================================================
+   🔢 INPUTS NUMÉRICOS
+   Centraliza o texto nos campos de meta e quantidade
+   ============================================================= */
 #meta-input,
 #ml-input {
     text-align: center;
 }
 
 /* =============================================================
-   REMOVE SETAS DOS INPUTS NUMÉRICOS
+   🚫 REMOVE SETAS DOS INPUTS NUMÉRICOS
    Melhora a aparência dos campos type="number" no Chrome (webkit)
    e no Firefox (moz), tornando-os visualmente mais limpos.
    ============================================================= */
@@ -135,7 +166,7 @@ input[type="number"] {
 }
 
 /* =============================================================
-   WRAPPER DOS INPUTS COM PREFIXO
+   📝 WRAPPER DOS INPUTS COM PREFIXO
    Usa flexbox para alinhar verticalmente o rótulo interno
    (ex: "Meta(ml)") com o campo de input.
    ============================================================= */
@@ -153,10 +184,37 @@ input[type="number"] {
     left: 10px;
     font-size: 12px;
     color: #888;
-    pointer-events: none;
+    pointer-events: none;      /* Permite clicar através do prefixo */
 }
 
 /* Empurra o valor digitado para a direita, evitando sobreposição com o prefixo */
 .input-wrapper input {
     padding-left: 40px;
+}
+
+/* =============================================================
+   📂 SUBMENUS (TEMAS E POLÍTICAS)
+   Menus que se expandem lateralmente ao clicar
+   ============================================================= */
+.submenu {
+  position: relative;
+}
+
+.submenu-content {
+  display: none;             /* Oculto por padrão */
+  position: absolute;
+
+  right: 100%;               /* Abre para a esquerda do botão */
+  top: 0;                    /* Alinhado ao topo (pode ser ajustado pelo JS) */
+
+  background-color: #f9f9f9;
+  min-width: 160px;
+
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 30;               /* Acima do menu principal */
+}
+
+/* Torna visível quando ativado pelo JavaScript */
+.submenu-content.show {
+  display: block;
 }

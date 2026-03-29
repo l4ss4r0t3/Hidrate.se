@@ -1,2 +1,20 @@
-/* Importa a fonte Google Sans do Google Fonts */
+/* =============================================================
+   📝 FONTS.CSS - TIPOGRAFIA
+   =============================================================
+   Importa a fonte Google Sans do Google Fonts.
+   
+   Esta fonte é usada em toda a aplicação para manter
+   consistência visual com o design do Google Material.
+   ============================================================= */
+
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+
+/* =============================================================
+   📌 NOTA:
+   A fonte é aplicada no body.css via:
+   font-family: "Google Sans", sans-serif;
+   
+   O parâmetro 'display=swap' garante que o texto seja visível
+   mesmo enquanto a fonte está carregando, evitando FOIT
+   (Flash of Invisible Text).
+   ============================================================= */

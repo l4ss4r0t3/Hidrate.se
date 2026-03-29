@@ -20,7 +20,7 @@
   <rect
     id="agua-nivel"
     x="1" y="7" width="14" height="24"
-    fill="#000075" fill-opacity="0.55"
+    fill="#000075" fill-opacity="0.95"
     clip-path="url(#clip-interior)"/>
 
   <!-- CAMADA 2: Pixels da garrafa (cores e opacidades exatas do design original) -->

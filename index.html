@@ -133,9 +133,6 @@
         <!-- Reseta o progresso do dia, voltando a garrafa para cheia -->
         <button type="button" id="btn-zerar">Encher Garrafa</button>
 
-        <!-- Alterna entre tema claro e escuro (filtro CSS invert) -->
-        <button type="button" id="btn-tema">Inverter Cores</button>
-
         <!-- ====================================================
              🔐 BOTÃO DE AUTENTICAÇÃO (DINÂMICO)
              Texto e função mudam conforme estado de autenticação:
@@ -144,372 +141,341 @@
              Controlado por: onAuthStateChanged (Firebase)
              ==================================================== -->
         <button type="button" id="btn-auth">Login com Google</button>
-        
+
+        <!-- Botão para abrir popup de introdução -->
         <button type="button" onclick="abrir()">Introdução</button>
 
         <!-- ====================================================
-             📚 LINKS EXTERNOS
+             🎨 SUBMENU: TEMAS
+             Controles para personalização visual do app
              ==================================================== -->
+        <div class="submenu">
+          <button class="submenu-btn">Temas</button>
+          <div class="submenu-content">
+            <!-- Alterna entre tema claro e escuro (filtro CSS invert) -->
+            <button type="button" id="btn-tema">Inverter Cores</button>
+            
+            <!-- Input para definir imagem de fundo personalizada -->
+            <label for="bg-input">Plano de fundo (URL)</label>
+            <input type="text" id="bg-input" placeholder="https://imagem.com/bg.jpg">
+          </div>
+        </div>
 
-        <!-- Políticas legais do serviço -->
-        <a href="policies/privacy.html" target="_blank" class="menu-link">Política de Privacidade</a>
-        <a href="policies/service.html" target="_blank" class="menu-link">Termos de Serviço</a>
-        
-        <!-- Manual do usuário e informações sobre o projeto -->
-        <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
-          README (GitHub)
-        </a>
+        <!-- ====================================================
+             📚 SUBMENU: POLÍTICAS E DOCUMENTAÇÃO
+             Links para documentos legais e suporte
+             ==================================================== -->
+        <div class="submenu">
+          <button class="submenu-btn">Políticas</button>
+          <div class="submenu-content">
+            <!-- Políticas legais do serviço -->
+            <a href="policies/privacy.html" target="_blank" class="menu-link">Política de Privacidade</a>
+            <a href="policies/service.html" target="_blank" class="menu-link">Termos de Serviço</a>
+            
+            <!-- Manual do usuário e informações sobre o projeto -->
+            <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
+              README (GitHub)
+            </a>
 
-        <!-- Link para exclusão de conta (destaque em vermelho) -->
-        <a href="policies/deletion.html" target="_blank" class="menu-link" style="color: #ff4444;">Excluir Conta</a>
+            <!-- Link para exclusão de conta (destaque em vermelho) -->
+            <a href="policies/deletion.html" target="_blank" class="menu-link" style="color: #ff4444;">Excluir Conta</a>
+          </div>
+        </div>
 
       </div>
     </div>
   </header>
 
   <!-- ============================================================
-       🍼 GARRAFA DIGITAL INTERATIVA (SVG EMBARCADO)
-       
-       Representação visual da meta de hidratação do dia.
-       A garrafa começa CHEIA e ESVAZIA conforme o usuário
-       registra o consumo de água.
-       
-       ESTRUTURA DO SVG (viewBox: 16x32 unidades):
-       ┌─────────────────────────────────────────────────────┐
-       │ • clipPath           → Máscara da forma da garrafa  │
-       │ • rect #agua-nivel   → Nível da água (dinâmico)     │
-       │ • g #pixels-garrafa  → Estrutura visual pixel art   │
-       │ • text #texto-ingerido → ML restantes (topo)        │
-       │ • line #linha-fracao   → Separador (/)              │
-       │ • text #texto-meta     → Meta total (base)          │
-       └─────────────────────────────────────────────────────┘
-       
-       DIMENSÕES INTERNAS (usadas em bottles.js):
-       - ALTURA_MAX_SVG = 24  (espaço de y=7 até y=31)
-       - POSICAO_BASE_Y = 31  (base interna da garrafa)
-       
-       MANIPULAÇÃO JAVASCRIPT:
-       O script bottles.js acessa este SVG via contentDocument
-       e altera dinamicamente os atributos 'height' e 'y' do
-       elemento #agua-nivel para refletir o progresso do dia.
-       
-       COMPORTAMENTO:
-       - Garrafa CHEIA = Meta ainda não alcançada (restam Xml)
-       - Garrafa VAZIA = Meta batida! 🎉
-       - Botão "Encher Garrafa" reseta para estado inicial
+       🧊 GARRAFA DE ÁGUA INTERATIVA (SVG)
+       Elemento visual principal que mostra o progresso de hidratação.
+       O arquivo SVG é carregado via <object> para permitir manipulação
+       via JavaScript dos elementos internos (água, texto).
        ============================================================ -->
-  <main class="garrafa">
-    <object id="svg-garrafa" data="images/svgs/bottles/two.svg" type="image/svg+xml"></object>
+  <main>
+    <div class="garrafa">
+      <object 
+        id="svg-garrafa" 
+        data="images/svgs/bottles/two.svg" 
+        type="image/svg+xml"
+        aria-label="Garrafa de água mostrando progresso de hidratação">
+      </object>
+    </div>
   </main>
 
+  <!-- ============================================================
+       💬 POPUP DE INTRODUÇÃO
+       Modal que explica o funcionamento do app na primeira visita.
+       Controlado por popups.js (exibe automaticamente uma vez).
+       ============================================================ -->
   <div id="meu-popup">
-  <div class="conteudo">
-    <h1>Hidrate.se | Sua Garrafa de Água Digital</h1>
-    <p>Bem-vindo ao nosso APP de hidratação: 
-        Sua garrafa de água digital para acompanhar sua hidratação no dia a dia.<br><br>
-        Defina sua meta, registre seu consumo e visualize seu progresso de forma simples e intuitiva.<br><br>
-       
-        📖 Como usar:<br><br>
-        - Defina sua meta diária<br>
-        - Ajuste o campo Meta (ml) com a quantidade de água que deseja beber no dia.<br>
-        - Registre o consumo<br>
-        - Digite a quantidade em Qtd. (ml) e toque em Beber Água.<br>
-        - Acompanhe sua garrafa<br>
-        - A garrafa esvazia conforme você bebe água<br>
-        - quando chegar ao final, parabéns! 🎉<br>
-        - Use Encher Garrafa para começar novamente.<br><br>
-       
-        🔐 Faça login para salvar seus dados na nuvem<br>
-       📱 Sem login, seus dados permanecem apenas neste dispositivo<br><br>
-
-       - Use Inverter Cores para alternar entre modo claro e escuro 🌙☀️<br><br>
-
-       Comece agora e mantenha-se hidratado! 🚀</p><br>
-    <button onclick="fechar()" class="text-button">Fechar</button>
-  </div>
+    <div class="conteudo">
+      <h2>👋 Bem-vindo ao Hidrate.se!</h2>
+      
+      <p>🚰 <strong>Sua garrafa digital de hidratação</strong></p>
+      
+      <p>Este app ajuda você a acompanhar o consumo de água ao longo do dia de forma visual e interativa.</p>
+      
+      <h3>Como usar:</h3>
+      <ul style="text-align: left;">
+        <li>📊 <strong>Defina sua meta</strong> diária (padrão: 2000ml)</li>
+        <li>💧 <strong>Registre</strong> cada vez que beber água</li>
+        <li>📉 A garrafa <strong>esvazia</strong> conforme você atinge a meta</li>
+        <li>🎉 Ao completar, você verá uma <strong>mensagem de celebração</strong></li>
+        <li>🔄 Use "Encher Garrafa" para <strong>resetar</strong> no dia seguinte</li>
+      </ul>
+      
+      <p>🔐 <strong>Faça login com Google</strong> para salvar seu progresso na nuvem!</p>
+      
+      <button onclick="fechar()" style="margin-top: 20px; padding: 10px 20px; background: #74ccf4; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Entendi! 💙
+      </button>
+    </div>
   </div>
 
   <!-- ============================================================
-       🔥 FIREBASE — BACKEND E AUTENTICAÇÃO
-       
-       Módulo ES6 que gerencia toda a lógica de backend:
-       - Autenticação via Google (web e Android)
-       - Sincronização em tempo real com Firestore
-       - Persistência de dados do usuário (totalBebido, metaDiaria)
-       
-       FLUXO DE AUTENTICAÇÃO:
-       1. Usuário clica em "Login com Google"
-       2. onAuthStateChanged detecta mudança de estado
-       3. Se logado: inicia listener do Firestore
-       4. Toda mudança no banco atualiza automaticamente a UI
-       
-       EXPOSIÇÃO GLOBAL:
-       As funções e instâncias Firebase são expostas em window
-       para permitir acesso pelos scripts externos (bottles.js).
+       🔥 FIREBASE SDK (MÓDULOS ES6)
+       Carregamento do Firebase via CDN com import maps.
+       Permite usar sintaxe moderna de importação sem bundler.
+       ============================================================ -->
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js"
+    }
+  }
+  </script>
+
+  <!-- ============================================================
+       🔥 CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE
+       Script modular que configura autenticação e banco de dados.
        ============================================================ -->
   <script type="module">
     // ========================================================
-    // 📦 IMPORTAÇÕES FIREBASE SDK (v10.8.0)
-    // Módulos importados via CDN para evitar build local
+    // 📦 IMPORTAÇÕES DO FIREBASE
     // ========================================================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { initializeApp } from 'firebase/app';
     import { 
-        getAuth, 
-        GoogleAuthProvider, 
-        signInWithPopup, 
-        getRedirectResult, 
-        onAuthStateChanged, 
-        signOut, 
-        signInWithCredential 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      signOut, 
+      onAuthStateChanged 
+    } from 'firebase/auth';
     import { 
-        getFirestore, 
-        doc, 
-        onSnapshot, 
-        setDoc, 
-        updateDoc, 
-        increment 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    // Importa as credenciais do Firebase do arquivo de config
-    import { firebaseConfig } from './scripts/config.js';
+      getFirestore, 
+      doc, 
+      setDoc, 
+      updateDoc, 
+      onSnapshot, 
+      increment 
+    } from 'firebase/firestore';
 
     // ========================================================
-    // 🔥 INICIALIZAÇÃO DO FIREBASE
-    // Instancia os serviços de autenticação e banco de dados
+    // 🔧 CONFIGURAÇÃO DO FIREBASE
+    // Credenciais do projeto (substituir pelas suas)
     // ========================================================
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);                    // Serviço de autenticação
-    const db = getFirestore(app);                 // Banco de dados Firestore
-    const provider = new GoogleAuthProvider();    // Provedor Google OAuth
+    const firebaseConfig = {
+      apiKey: "AIzaSyCHAOG-r43lP4g-TsxAAp8_T68N3d31YZ8",
+      authDomain: "hidrate-se.firebaseapp.com",
+      projectId: "hidrate-se",
+      storageBucket: "hidrate-se.firebasestorage.app",
+      messagingSenderId: "423949265734",
+      appId: "1:423949265734:web:d6eb7cf2cbedf86e450503"
+    };
 
     // ========================================================
-    // 📡 VARIÁVEL DE CONTROLE DO LISTENER
+    // 🚀 INICIALIZAÇÃO
+    // ========================================================
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    // ========================================================
+    // 🔐 AUTENTICAÇÃO COM GOOGLE
+    // ========================================================
+    
+    /**
+     * Realiza login com popup do Google
+     * Após o login, o Firebase automaticamente sincroniza dados
+     */
+    window.fazerLogin = async function() {
+      const provider = new GoogleAuthProvider();
+      try {
+        await signInWithPopup(auth, provider);
+        console.log('✅ Login realizado com sucesso');
+      } catch (erro) {
+        console.error('❌ Erro no login:', erro);
+        alert('Erro ao fazer login. Tente novamente.');
+      }
+    };
+
+    /**
+     * Realiza logout e volta para modo offline (localStorage)
+     */
+    window.fazerLogout = async function() {
+      try {
+        await signOut(auth);
+        console.log('👋 Logout realizado');
+      } catch (erro) {
+        console.error('❌ Erro no logout:', erro);
+      }
+    };
+
+    // ========================================================
+    // 🔔 VARIÁVEL PARA GERENCIAR LISTENERS DO FIRESTORE
     // Armazena a função de cancelamento do onSnapshot para
-    // evitar múltiplos listeners simultâneos ao trocar usuário
+    // evitar múltiplas inscrições simultâneas
     // ========================================================
     let unsubscribe = null;
 
     // ========================================================
-    // 🔐 FUNÇÃO: FAZER LOGIN
-    // Gerencia login tanto no navegador web quanto no app Android.
-    // 
-    // WEB: Abre popup de autenticação Google
-    // ANDROID: Chama método nativo via JavaScriptInterface
-    // ========================================================
-    window.fazerLogin = () => {
-        // Verifica se está rodando no app Android
-        if (window.AndroidBridge && AndroidBridge.iniciarLogin) {
-            AndroidBridge.iniciarLogin();  // Chama método nativo
-        } else {
-            // Login via popup no navegador web
-            signInWithPopup(auth, provider).catch(console.error);
-        }
-    };
-
-    // ========================================================
-    // 🚪 FUNÇÃO: FAZER LOGOUT
-    // Desloga o usuário e limpa os dados armazenados.
-    // Se estiver no Android, também limpa o token nativo.
-    // ========================================================
-    window.fazerLogout = async () => {
-        try {
-            await signOut(auth);  // Desloga do Firebase
-
-            // Se estiver no Android, limpa token nativo também
-            if (window.AndroidBridge && AndroidBridge.fazerLogout) {
-                AndroidBridge.fazerLogout();
-            }
-
-            console.log("Logout completo");
-        } catch (error) {
-            console.error("Erro no logout:", error);
-        }
-    };
-
-    // ========================================================
-    // 📲 FUNÇÃO: RECEBER TOKEN DO ANDROID
-    // Chamada pelo app Android após login nativo bem-sucedido.
-    // Converte o idToken do Google em credencial Firebase.
-    // ========================================================
-    window.receberTokenGoogle = async (idToken) => {
-        try {
-            // Cria credencial Firebase a partir do token Google
-            const credential = GoogleAuthProvider.credential(idToken);
-            const result = await signInWithCredential(auth, credential);
-
-            console.log("Login via Android:", result.user.displayName);
-        } catch (error) {
-            console.error("Erro login Android:", error);
-        }
-    };
-
-    // ========================================================
-    // 🔁 VERIFICAÇÃO DE REDIRECT (WEB)
-    // Verifica se houve retorno de login por redirecionamento.
-    // Útil para alguns fluxos de autenticação mais antigos.
-    // ========================================================
-    getRedirectResult(auth)
-        .then((result) => {
-            if (result?.user) {
-                console.log("Login web:", result.user.displayName);
-            }
-        })
-        .catch(console.error);
-
-    // ========================================================
     // 👀 OBSERVADOR DE ESTADO DE AUTENTICAÇÃO
-    // ATUALIZADO: Gerencia transições offline ↔ online
+    // Gerencia transições entre modo offline ↔ online
     // ========================================================
     onAuthStateChanged(auth, (user) => {
-    const btnAuth = document.getElementById('btn-auth');
-    const authWarning = document.getElementById('auth-warning');
- 
-    // Limpa listener anterior
-    if (unsubscribe) {
+      const btnAuth = document.getElementById('btn-auth');
+      const authWarning = document.getElementById('auth-warning');
+   
+      // Limpa listener anterior para evitar duplicação
+      if (unsubscribe) {
         unsubscribe();
         unsubscribe = null;
-    }
- 
-    if (user) {
+      }
+   
+      if (user) {
         // ================================================
         // ✅ USUÁRIO LOGADO (Offline → Online)
         // ================================================
         
         if (btnAuth) {
-            btnAuth.textContent = "Sair (Google)";
-            btnAuth.onclick = window.fazerLogout;
+          btnAuth.textContent = "Sair (Google)";
+          btnAuth.onclick = window.fazerLogout;
         }
- 
+   
         if (authWarning) authWarning.style.display = 'none';
- 
-        // 🔄 NÃO limpa localStorage aqui - deixa escutarUsuario fazer isso
-        // após migrar os dados para o Firebase
- 
-        // Inicia sincronização (migração acontece dentro)
+   
+        // Inicia sincronização (migração de dados acontece aqui)
         escutarUsuario(user);
- 
-    } else {
+   
+      } else {
         // ================================================
         // ❌ USUÁRIO DESLOGADO (Online → Offline)
         // ================================================
         
         if (btnAuth) {
-            btnAuth.textContent = "Login com Google";
-            btnAuth.onclick = window.fazerLogin;
+          btnAuth.textContent = "Login com Google";
+          btnAuth.onclick = window.fazerLogin;
         }
- 
+   
         if (authWarning) authWarning.style.display = 'block';
- 
-        // 💾 Salva estado atual no localStorage antes de resetar
+   
+        // Salva estado atual no localStorage antes de resetar
         if (window.totalBebido > 0 || window.metaDiaria !== 2000) {
-            if (typeof window.salvarNoLocalStorage === 'function') {
-                window.salvarNoLocalStorage();
-                console.log('💾 Dados salvos no localStorage ao deslogar');
-            }
+          if (typeof window.salvarNoLocalStorage === 'function') {
+            window.salvarNoLocalStorage();
+            console.log('💾 Dados salvos no localStorage ao deslogar');
+          }
         }
- 
+   
         // Carrega dados do localStorage (se houver)
         if (typeof window.carregarDoLocalStorage === 'function') {
-            window.carregarDoLocalStorage();
+          window.carregarDoLocalStorage();
         }
- 
-        // Atualiza UI
+   
+        // Atualiza UI com dados do localStorage
         resetarEstado();
-    }
+      }
     });
 
     // ========================================================
-    // 🔥 FIRESTORE - SINCRONIZAÇÃO BIDIRECIONAL COM LOCALSTORAGE
-    // Versão melhorada que transfere dados entre offline/online
+    // 🔥 FIRESTORE - SINCRONIZAÇÃO COM LOCALSTORAGE
+    // Escuta mudanças no documento do usuário em tempo real
     // ========================================================
- 
+    
     /**
-    * Escuta mudanças no documento do usuário no Firestore
-    * ATUALIZADO: Migra dados do localStorage ao fazer login
-    */
+     * Escuta mudanças no documento do usuário no Firestore
+     * Migra dados do localStorage ao fazer login pela primeira vez
+     */
     function escutarUsuario(user) {
-    const userRef = doc(db, "usuarios", user.uid);
- 
-        unsubscribe = onSnapshot(userRef, (docSnap) => {
+      const userRef = doc(db, "usuarios", user.uid);
+   
+      unsubscribe = onSnapshot(userRef, (docSnap) => {
         if (docSnap.exists()) {
-            // ================================================
-            // ✅ DOCUMENTO EXISTE - Usuário já tinha conta
-            // ================================================
-            const dados = docSnap.data();
- 
-            window.totalBebido = dados.totalBebido || 0;
-            window.metaDiaria = dados.metaDiaria || 2000;
- 
-            atualizarUI();
- 
+          // ================================================
+          // ✅ DOCUMENTO EXISTE - Usuário já tinha conta
+          // ================================================
+          const dados = docSnap.data();
+   
+          window.totalBebido = dados.totalBebido || 0;
+          window.metaDiaria = dados.metaDiaria || 2000;
+   
+          atualizarUI();
+   
         } else {
-            // ================================================
-            // 🆕 DOCUMENTO NÃO EXISTE - Primeira vez logando
-            // Verifica se há dados do localStorage para migrar
-            // ================================================
-            
-            const dadosLocal = localStorage.getItem('hidratese_dados');
-            let dadosIniciais = {
-                totalBebido: 0,
-                metaDiaria: 2000
-            };
- 
-            if (dadosLocal) {
-                try {
-                    const dadosParsed = JSON.parse(dadosLocal);
-                    
-                    // 🔄 MIGRAÇÃO: Usa dados do localStorage como ponto de partida
-                    dadosIniciais = {
-                        totalBebido: dadosParsed.totalBebido || 0,
-                        metaDiaria: dadosParsed.metaDiaria || 2000
-                    };
-                    
-                    console.log('📤 Migrando dados do localStorage para Firebase:', dadosIniciais);
-                } catch (e) {
-                    console.error('Erro ao migrar localStorage:', e);
-                }
+          // ================================================
+          // 🆕 DOCUMENTO NÃO EXISTE - Primeira vez logando
+          // Verifica se há dados do localStorage para migrar
+          // ================================================
+          
+          const dadosLocal = localStorage.getItem('hidratese_dados');
+          let dadosIniciais = {
+            totalBebido: 0,
+            metaDiaria: 2000
+          };
+   
+          if (dadosLocal) {
+            try {
+              const dadosParsed = JSON.parse(dadosLocal);
+              
+              // Migra dados do localStorage para o Firebase
+              dadosIniciais = {
+                totalBebido: dadosParsed.totalBebido || 0,
+                metaDiaria: dadosParsed.metaDiaria || 2000
+              };
+              
+              console.log('📤 Migrando dados do localStorage para Firebase:', dadosIniciais);
+            } catch (e) {
+              console.error('Erro ao migrar localStorage:', e);
             }
- 
-            // Cria documento com dados migrados (ou padrão se não houver)
-            setDoc(userRef, dadosIniciais);
-            
-            // 🧹 Agora pode limpar localStorage com segurança
-            if (typeof window.limparLocalStorage === 'function') {
-                window.limparLocalStorage();
-            }
+          }
+   
+          // Cria documento com dados migrados
+          setDoc(userRef, dadosIniciais);
+          
+          // Limpa localStorage após migração bem-sucedida
+          if (typeof window.limparLocalStorage === 'function') {
+            window.limparLocalStorage();
+          }
         }
-    });
+      });
     }
 
     // ========================================================
-    // 🎨 FUNÇÃO: ATUALIZAR INTERFACE (UI)
-    // Mantém igual
+    // 🎨 ATUALIZAR INTERFACE (UI)
     // ========================================================
     function atualizarUI() {
-    if (typeof window.atualizarVisual === 'function') {
+      if (typeof window.atualizarVisual === 'function') {
         window.atualizarVisual();
-    }
- 
-    const inputMeta = document.getElementById('meta-input');
-    if (inputMeta) inputMeta.value = window.metaDiaria;
+      }
+   
+      const inputMeta = document.getElementById('meta-input');
+      if (inputMeta) inputMeta.value = window.metaDiaria;
     }
 
     // ========================================================
-    // 🔄 FUNÇÃO: RESETAR ESTADO
-    // Atualizado para usar dados já carregados do localStorage
+    // 🔄 RESETAR ESTADO (LOGOUT)
+    // Mantém dados já carregados do localStorage
     // ========================================================
     function resetarEstado() {
-    // NÃO reseta para 0 - mantém o que foi carregado do localStorage
-    
-    if (typeof window.atualizarVisual === 'function') {
+      if (typeof window.atualizarVisual === 'function') {
         window.atualizarVisual();
-    }
-    
-    // Atualiza campo de meta com valor atual
-    const inputMeta = document.getElementById('meta-input');
-    if (inputMeta) inputMeta.value = window.metaDiaria;
+      }
+      
+      const inputMeta = document.getElementById('meta-input');
+      if (inputMeta) inputMeta.value = window.metaDiaria;
     }
 
     // ========================================================
@@ -517,11 +483,11 @@
     // Torna as instâncias Firebase acessíveis aos scripts
     // externos que não são módulos ES6 (bottles.js, etc.)
     // ========================================================
-    window.db = db;                  // Instância do Firestore
-    window.auth = auth;              // Instância do Auth
-    window.updateDoc = updateDoc;    // Função de atualização
-    window.doc = doc;                // Função de referência de documento
-    window.increment = increment;    // Operador de incremento atômico
+    window.db = db;
+    window.auth = auth;
+    window.updateDoc = updateDoc;
+    window.doc = doc;
+    window.increment = increment;
 
   </script>
 
@@ -532,7 +498,7 @@
        ============================================================ -->
   <script src="scripts/bottles.js"></script>  <!-- Manipulação da garrafa SVG -->
   <script src="scripts/buttons.js"></script>  <!-- Controle dos botões e menu -->
-  <script src="scripts/popups.js"></script>    <!-- Lógica do popup -->
+  <script src="scripts/popups.js"></script>   <!-- Lógica do popup -->
   <script src="scripts/themes.js"></script>   <!-- Alternância de tema claro/escuro -->
 
   <!-- Rodapé vazio (pode ser usado futuramente) -->

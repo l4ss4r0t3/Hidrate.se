@@ -1,5 +1,14 @@
 /* =============================================================
-   CONTAINER DA GARRAFA
+   🧊 BOTTLES.CSS - ESTILOS DA GARRAFA SVG
+   =============================================================
+   Este arquivo define:
+   - Posicionamento da garrafa na tela
+   - Tamanho responsivo do SVG
+   - Propriedades de interação (pointer-events)
+   ============================================================= */
+
+/* =============================================================
+   📦 CONTAINER DA GARRAFA
    Ocupa toda a tela e centraliza o SVG da garrafa.
    pointer-events: none garante que cliques passem através dela
    e atinjam elementos embaixo (como o botão do menu).
@@ -10,16 +19,23 @@
     width: 100%;
     height: 100%;
     position: absolute;
+    
+    /* Centraliza o SVG horizontal e verticalmente */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1; /* Fica atrás do menu dropdown */
-    pointer-events: none;
+    
+    z-index: 1;               /* Fica atrás do menu dropdown (z-index: 20) */
+    pointer-events: none;     /* Permite cliques passarem através */
 }
 
-/* O SVG ocupa 90% da altura da tela, mantendo a proporção original */
+/* =============================================================
+   🎨 SVG DA GARRAFA
+   Define o tamanho do elemento SVG
+   Ocupa 90% da altura da tela, mantendo a proporção original
+   ============================================================= */
 .garrafa object {
-    width: auto;
-    height: 90%;
-    margin: auto;
+    width: auto;              /* Largura calculada automaticamente */
+    height: 90%;              /* 90% da altura da tela */
+    margin: auto;             /* Centralização adicional */
 }
