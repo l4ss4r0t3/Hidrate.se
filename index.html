@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="styles/bottles.css">   <!-- Estilos da garrafa SVG -->
   <link rel="stylesheet" href="styles/fonts.css">     <!-- Tipografia customizada -->
   <link rel="stylesheet" href="styles/menus.css">     <!-- Estilos do menu dropdown -->
+  <link rel="stylesheet" href="styles/popups.css">    <!-- Estilos do popup -->
 
   <!-- ============================================================
        🎨 TEMA DO NAVEGADOR
@@ -143,20 +144,22 @@
              Controlado por: onAuthStateChanged (Firebase)
              ==================================================== -->
         <button type="button" id="btn-auth">Login com Google</button>
+        
+        <button type="button" onclick="abrir()">Introdução</button>
 
         <!-- ====================================================
              📚 LINKS EXTERNOS
              ==================================================== -->
-        
-        <!-- Manual do usuário e informações sobre o projeto -->
-        <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
-          Manual / Sobre
-        </a>
 
         <!-- Políticas legais do serviço -->
         <a href="policies/privacy.html" target="_blank" class="menu-link">Política de Privacidade</a>
         <a href="policies/service.html" target="_blank" class="menu-link">Termos de Serviço</a>
         
+        <!-- Manual do usuário e informações sobre o projeto -->
+        <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
+          README (GitHub)
+        </a>
+
         <!-- Link para exclusão de conta (destaque em vermelho) -->
         <a href="policies/deletion.html" target="_blank" class="menu-link" style="color: #ff4444;">Excluir Conta</a>
 
@@ -198,6 +201,33 @@
   <main class="garrafa">
     <object id="svg-garrafa" data="images/svgs/bottles/two.svg" type="image/svg+xml"></object>
   </main>
+
+  <div id="meu-popup">
+  <div class="conteudo">
+    <h1>Hidrate.se | Sua Garrafa de Água Digital</h1>
+    <p>Bem-vindo ao nosso APP de hidratação: 
+        Sua garrafa de água digital para acompanhar sua hidratação no dia a dia.<br><br>
+        Defina sua meta, registre seu consumo e visualize seu progresso de forma simples e intuitiva.<br><br>
+       
+        📖 Como usar:<br><br>
+        - Defina sua meta diária<br>
+        - Ajuste o campo Meta (ml) com a quantidade de água que deseja beber no dia.<br>
+        - Registre o consumo<br>
+        - Digite a quantidade em Qtd. (ml) e toque em Beber Água.<br>
+        - Acompanhe sua garrafa<br>
+        - A garrafa esvazia conforme você bebe água<br>
+        - quando chegar ao final, parabéns! 🎉<br>
+        - Use Encher Garrafa para começar novamente.<br><br>
+       
+        🔐 Faça login para salvar seus dados na nuvem<br>
+       📱 Sem login, seus dados permanecem apenas neste dispositivo<br><br>
+
+       - Use Inverter Cores para alternar entre modo claro e escuro 🌙☀️<br><br>
+
+       Comece agora e mantenha-se hidratado! 🚀</p><br>
+    <button onclick="fechar()" class="text-button">Fechar</button>
+  </div>
+  </div>
 
   <!-- ============================================================
        🔥 FIREBASE — BACKEND E AUTENTICAÇÃO
@@ -502,6 +532,7 @@
        ============================================================ -->
   <script src="scripts/bottles.js"></script>  <!-- Manipulação da garrafa SVG -->
   <script src="scripts/buttons.js"></script>  <!-- Controle dos botões e menu -->
+  <script src="scripts/popups.js"></script>    <!-- Lógica do popup -->
   <script src="scripts/themes.js"></script>   <!-- Alternância de tema claro/escuro -->
 
   <!-- Rodapé vazio (pode ser usado futuramente) -->

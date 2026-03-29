@@ -28,6 +28,11 @@
 
     max-height: 60vh; /* O menu ocupa no máximo 60% da altura da tela */
     overflow-y: auto; /* Ativa o scroll apenas se houver muitos itens */
+    scrollbar-width: none;
+}
+
+.dropdown-content::-webkit-scrollbar {
+  display: none;
 }
 
 /* =============================================================
