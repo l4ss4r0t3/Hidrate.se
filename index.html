@@ -154,8 +154,13 @@
           <div class="submenu-content">
 
             <!-- Input para definir imagem de fundo personalizada -->
-            <input type="text" id="bg-input" placeholder="Link da Imagem:">
+             <span class="input-wrapper">
+          <span class="input-prefix">Link:</span>
+            <input type="text" id="bg-input">
+            </span>
             <button type="button" id="btn-bg">Aplicar/Remover<br>Plano de Fundo</button>
+
+            <button type="button" id="btn-btl">Trocar Garrafa</button>
           
             <!-- Alterna entre tema claro e escuro (filtro CSS invert) -->
             <button type="button" id="btn-tema">Inverter Cores</button>
@@ -494,9 +499,6 @@
   <script src="scripts/buttons.js"></script>  <!-- Controle dos botões e menu -->
   <script src="scripts/popups.js"></script>   <!-- Lógica do popup -->
   <script src="scripts/themes.js"></script>   <!-- Alternância de tema claro/escuro -->
-
-  <!-- Rodapé vazio (pode ser usado futuramente) -->
-  <footer></footer>
 
 </body>
 </html>
