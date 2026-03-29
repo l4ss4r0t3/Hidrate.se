@@ -152,12 +152,14 @@
         <div class="submenu">
           <button class="submenu-btn">Temas</button>
           <div class="submenu-content">
+
+            <!-- Input para definir imagem de fundo personalizada -->
+            <input type="text" id="bg-input" placeholder="Link da Imagem:">
+            <button type="button" id="btn-bg">Aplicar/Remover<br>Plano de Fundo</button>
+          
             <!-- Alterna entre tema claro e escuro (filtro CSS invert) -->
             <button type="button" id="btn-tema">Inverter Cores</button>
-            
-            <!-- Input para definir imagem de fundo personalizada -->
-            <label for="bg-input">Plano de fundo (URL)</label>
-            <input type="text" id="bg-input" placeholder="https://imagem.com/bg.jpg">
+
           </div>
         </div>
 
@@ -212,7 +214,7 @@
     <div class="conteudo">
       <h2>👋 Bem-vindo ao Hidrate.se!</h2>
       
-      <p>🚰 <strong>Sua garrafa digital de hidratação</strong></p>
+      <p>🚰 <strong>Sua garrafa de água digital</strong></p>
       
       <p>Este app ajuda você a acompanhar o consumo de água ao longo do dia de forma visual e interativa.</p>
       
@@ -225,10 +227,10 @@
         <li>🔄 Use "Encher Garrafa" para <strong>resetar</strong> no dia seguinte</li>
       </ul>
       
-      <p>🔐 <strong>Faça login com Google</strong> para salvar seu progresso na nuvem!</p>
+      <p>🔐 <strong>Faça login com Google</strong> para salvar seu progresso na nuvem!</p><br>
       
-      <button onclick="fechar()" style="margin-top: 20px; padding: 10px 20px; background: #74ccf4; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Entendi! 💙
+      <button onclick="fechar()" class="text-button">
+        Entendi!
       </button>
     </div>
   </div>

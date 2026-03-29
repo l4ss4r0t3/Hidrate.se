@@ -97,6 +97,7 @@ body.alt-theme .dropdown-content {
     text-decoration: none;
     border-radius: 4px;
     transition: background-color 0.3s ease;
+    cursor: pointer;
 }
 
 /* =============================================================
@@ -110,4 +111,14 @@ body::before {
   inset: 0;                         /* Cobre toda a tela */
   background: rgba(0,0,0,0.3);      /* Preto 30% opaco */
   z-index: -1;                      /* Fica atrás de tudo */
+}
+
+::-moz-selection {
+  background-color: black;
+  color: white;
+}
+
+::selection {
+  background-color: black;
+  color: white;
 }
