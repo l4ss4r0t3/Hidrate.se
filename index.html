@@ -273,25 +273,17 @@
       increment 
     } from 'firebase/firestore';
 
-    // ========================================================
-    // 🔧 CONFIGURAÇÃO DO FIREBASE
-    // Credenciais do projeto (substituir pelas suas)
-    // ========================================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyCHAOG-r43lP4g-TsxAAp8_T68N3d31YZ8",
-      authDomain: "hidrate-se.firebaseapp.com",
-      projectId: "hidrate-se",
-      storageBucket: "hidrate-se.firebasestorage.app",
-      messagingSenderId: "423949265734",
-      appId: "1:423949265734:web:d6eb7cf2cbedf86e450503"
-    };
+    // Importa as credenciais do Firebase do arquivo de config
+    import { firebaseConfig } from './scripts/config.js';
 
     // ========================================================
-    // 🚀 INICIALIZAÇÃO
+    // 🔥 INICIALIZAÇÃO DO FIREBASE
+    // Instancia os serviços de autenticação e banco de dados
     // ========================================================
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);                    // Serviço de autenticação
+    const db = getFirestore(app);                 // Banco de dados Firestore
+    const provider = new GoogleAuthProvider();    // Provedor Google OAuth
 
     // ========================================================
     // 🔐 AUTENTICAÇÃO COM GOOGLE
