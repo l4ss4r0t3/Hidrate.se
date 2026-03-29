@@ -142,8 +142,17 @@
              ==================================================== -->
         <button type="button" id="btn-auth">Login com Google</button>
 
+        <div class="submenu">
+          <button class="submenu-btn">Utilidades</button>
+          <div class="submenu-content">
+
         <!-- Botão para abrir popup de introdução -->
-        <button type="button" onclick="abrir()">Introdução</button>
+        <button type="button" onclick="abrirPopup('meu-popup')">Introdução</button>
+        <button type="button" onclick="abrirPopup('meu-popup2')">Calculadora</button>
+
+
+        </div>
+        </div>
 
         <!-- ====================================================
              🎨 SUBMENU: TEMAS
@@ -234,9 +243,30 @@
       
       <p>🔐 <strong>Faça login com Google</strong> para salvar seu progresso na nuvem!</p><br>
       
-      <button onclick="fechar()" class="text-button">
+      <button onclick="fecharPopup('meu-popup');" class="text-button">
         Entendi!
       </button>
+    </div>
+  </div>
+
+  <div id="meu-popup2">
+    <div class="conteudo2">
+
+      <h2>Calculadora de Hidratação</h2>
+      <p>Use esta calculadora para estimar sua necessidade diária de água com base no fator peso (35ml por kg).</p>
+      
+        <span class="input-prefix">Peso (kg):</span>
+        <input type="number" id="peso-input" placeholder="Peso (kg):">
+
+      <button id="calcular-btn">Calcular Meta Diária</button>
+      <p id="resultado-calculo" style=" font-weight: bold; margin: 0;"></p>
+
+      <p><b>ATENÇÂO:</b> Informamos que o resultado é uma estimativa baseada no seu peso. As necessidades reais de hidratação variam de pessoa para pessoa. Em caso de dúvidas ou condições médicas, consulte um especialista.</p>
+
+      <button onclick="fecharPopup('meu-popup2');" class="text-button">
+        Pronto!
+      </button>
+
     </div>
   </div>
 

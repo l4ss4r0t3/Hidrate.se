@@ -1,76 +1,64 @@
-// =============================================================
-// 💬 POPUPS.JS - GERENCIAMENTO DO POPUP DE INTRODUÇÃO
-// =============================================================
-// Este arquivo controla:
-// - Abertura e fechamento do popup de boas-vindas
-// - Exibição automática na primeira visita
-// - Persistência da visualização no localStorage
-// =============================================================
-
-// =============================================================
-// 🔓 FUNÇÃO: ABRIR POPUP
-// Exibe o modal de introdução e fecha o menu principal
-// =============================================================
-/**
- * Abre o popup de introdução
- * Também fecha o menu dropdown se estiver aberto
- */
-function abrir() {
+function abrirPopup(id) {
   const menu = document.querySelector('.dropdown-content');
-  
-  // Fecha o menu principal antes de abrir o popup
+
   if (menu) {
     menu.style.display = 'none';
   }
 
-  // Adiciona classe 'show' que torna o popup visível
-  document.getElementById("meu-popup").classList.add("show");
+  const popup = document.getElementById(id);
+  if (popup) {
+    popup.classList.add("show");
+  }
 }
 
-// =============================================================
-// 🔒 FUNÇÃO: FECHAR POPUP
-// Remove o popup da tela
-// =============================================================
-/**
- * Fecha o popup de introdução
- * Remove a classe 'show' que controla a visibilidade
- */
-function fechar() {
-  document.getElementById("meu-popup").classList.remove("show");
+function fecharPopup(id) {
+  const popup = document.getElementById(id);
+  if (popup) {
+    popup.classList.remove("show");
+  }
 }
 
-// =============================================================
-// 🎯 PREVENIR FECHAMENTO AO CLICAR DENTRO DO CONTEÚDO
-// Garante que apenas cliques no fundo escuro fechem o popup
-// =============================================================
-document.addEventListener("DOMContentLoaded", () => {
-  const popup = document.getElementById("meu-popup");
-  const conteudo = popup.querySelector(".conteudo");
+function configurarPopup(id, conteudoClasse) {
+  const popup = document.getElementById(id);
+  if (!popup) return;
 
-  // Impede que cliques dentro do conteúdo fechem o popup
+  const conteudo = popup.querySelector(conteudoClasse);
+  if (!conteudo) return;
+
   conteudo.addEventListener("click", (e) => {
     e.stopPropagation();
   });
 
-  // Qualquer clique no fundo escuro fecha o popup
   popup.addEventListener("click", () => {
-    fechar();
+    fecharPopup(id);
   });
-});
+}
 
-// =============================================================
-// 🚀 EXIBIÇÃO AUTOMÁTICA NA PRIMEIRA VISITA
-// Mostra o popup apenas uma vez usando localStorage
-// =============================================================
 document.addEventListener("DOMContentLoaded", () => {
+  configurarPopup("meu-popup", ".conteudo");
+  configurarPopup("meu-popup2", ".conteudo2");
+
   const popup = document.getElementById("meu-popup");
   const jaViu = localStorage.getItem("intro-vista");
 
-  // Se o usuário nunca viu a introdução, mostra automaticamente
   if (!jaViu && popup) {
-    abrir();
-    
-    // Marca como "já visto" para não exibir novamente
+    abrirPopup("meu-popup");
     localStorage.setItem("intro-vista", "true");
   }
+});
+
+const calcularBtn = document.getElementById("calcular-btn");
+const resultadoCalculo = document.getElementById("resultado-calculo");
+
+calcularBtn.addEventListener("click", () => {
+  const pesoInput = document.getElementById("peso-input");
+  const peso = parseFloat(pesoInput.value);
+
+  if (isNaN(peso)) {
+    resultadoCalculo.textContent = "Por favor, insira um peso válido.";
+    return;
+  }
+
+  const metaDiaria = peso * 35; // 35ml por kg
+  resultadoCalculo.textContent = `Sua meta diária de hidratação (teórica) é de: ${metaDiaria.toFixed(0)} ml.`;
 });
