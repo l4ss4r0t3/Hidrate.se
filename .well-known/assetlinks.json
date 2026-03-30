@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "se.hidrate.app",
+    "sha256_cert_fingerprints": ["E9:29:1F:42:E2:1F:39:7C:E3:FD:14:40:13:15:0A:5C:F4:DF:DD:50:63:35:87:28:49:1F:08:D9:75:B0:81:65"]
+  }
+}]
