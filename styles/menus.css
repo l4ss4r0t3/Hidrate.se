@@ -218,3 +218,7 @@ input[type="number"] {
 .submenu-content.show {
   display: block;
 }
+
+#bg-file {
+    display: none; /* Esconde o input de arquivo, usaremos o label estilizado */
+}

@@ -47,18 +47,66 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// =============================================================
+// 🧮 CALCULADORA → APLICAR META
+// Integra com window.metaDiaria (Firebase + localStorage)
+// =============================================================
+
 const calcularBtn = document.getElementById("calcular-btn");
+const aplicarBtn = document.getElementById("aplicar-meta-btn");
 const resultadoCalculo = document.getElementById("resultado-calculo");
 
-calcularBtn.addEventListener("click", () => {
-  const pesoInput = document.getElementById("peso-input");
-  const peso = parseFloat(pesoInput.value);
+let metaCalculada = null;
 
-  if (isNaN(peso)) {
-    resultadoCalculo.textContent = "Por favor, insira um peso válido.";
-    return;
-  }
+// =============================
+// CALCULAR
+// =============================
+if (calcularBtn) {
+    calcularBtn.addEventListener("click", () => {
+        const pesoInput = document.getElementById("peso-input");
+        const peso = parseFloat(pesoInput.value);
 
-  const metaDiaria = peso * 35; // 35ml por kg
-  resultadoCalculo.textContent = `Sua meta diária de hidratação (teórica) é de: ${metaDiaria.toFixed(0)} ml.`;
-});
+        if (isNaN(peso)) {
+            resultadoCalculo.textContent = "Por favor, insira um peso válido.";
+            metaCalculada = null;
+            return;
+        }
+
+        metaCalculada = Math.round(peso * 35);
+
+        resultadoCalculo.innerHTML =
+            `Meta sugerida: <strong>${metaCalculada} ml</strong>`;
+    });
+}
+
+// =============================
+// APLICAR META
+// =============================
+if (aplicarBtn) {
+    aplicarBtn.addEventListener("click", async () => {
+
+        if (!metaCalculada) {
+            resultadoCalculo.textContent = "Calcule primeiro!";
+            return;
+        }
+
+        const user = window.auth?.currentUser;
+
+        if (user) {
+            // ✅ ONLINE (Firebase)
+            const userRef = window.doc(window.db, "usuarios", user.uid);
+            await window.updateDoc(userRef, {
+                metaDiaria: metaCalculada
+            });
+        } else {
+            // 💾 OFFLINE (localStorage)
+            window.metaDiaria = metaCalculada;
+            salvarNoLocalStorage();
+            window.atualizarVisual();
+        }
+
+        // Feedback
+        resultadoCalculo.innerHTML =
+            `✅ Meta aplicada: <strong>${metaCalculada} ml</strong>`;
+    });
+}

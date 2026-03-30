@@ -163,11 +163,9 @@
           <div class="submenu-content">
 
             <!-- Input para definir imagem de fundo personalizada -->
-             <span class="input-wrapper">
-          <span class="input-prefix">Link:</span>
-            <input type="text" id="bg-input">
-            </span>
-            <button type="button" id="btn-bg">Aplicar/Remover<br>Plano de Fundo</button>
+             <label for="bg-file" class="bg-file">📸 - Escolher Imagem de Fundo</label>
+            <input type="file" id="bg-file" accept="image/*">
+            <button type="button" id="btn-bg">Aplicar Imagem de Fundo</button>
 
             <button type="button" id="btn-btl">Trocar Garrafa</button>
           
@@ -244,7 +242,7 @@
       <p>🔐 <strong>Faça login com Google</strong> para salvar seu progresso na nuvem!</p><br>
       
       <button onclick="fecharPopup('meu-popup');" class="text-button">
-        Entendi!
+        Fechar
       </button>
     </div>
   </div>
@@ -253,18 +251,21 @@
     <div class="conteudo2">
 
       <h2>Calculadora de Hidratação</h2>
-      <p>Use esta calculadora para estimar sua necessidade diária de água com base no fator peso (35ml por kg).</p>
+      <p>Use esta calculadora para estimar sua necessidade diária de água com base no fator peso (35ml por kg).</p><br>
       
-        <span class="input-prefix">Peso (kg):</span>
         <input type="number" id="peso-input" placeholder="Peso (kg):">
-
+      
+        <div class="calculadora">
       <button id="calcular-btn">Calcular Meta Diária</button>
+      <button id="aplicar-meta-btn">Aplicar meta</button>
+      </div>
+
       <p id="resultado-calculo" style=" font-weight: bold; margin: 0;"></p>
 
       <p><b>ATENÇÂO:</b> Informamos que o resultado é uma estimativa baseada no seu peso. As necessidades reais de hidratação variam de pessoa para pessoa. Em caso de dúvidas ou condições médicas, consulte um especialista.</p>
 
       <button onclick="fecharPopup('meu-popup2');" class="text-button">
-        Pronto!
+        Fechar
       </button>
 
     </div>
