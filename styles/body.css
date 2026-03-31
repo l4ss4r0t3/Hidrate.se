@@ -62,6 +62,10 @@ body.alt-theme .dropdown-content {
     filter: invert(100%) hue-rotate(180deg);
 }
 
+body.alt-theme #svg-garrafa {
+    filter: invert(100%) hue-rotate(180deg);
+}
+
 /* =============================================================
    📝 CONTAINER DE TEXTO
    Usado nas páginas de políticas (privacy.html, service.html, etc)
@@ -109,8 +113,10 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;                         /* Cobre toda a tela */
-  background: rgba(0,0,0,0.3);      /* Preto 30% opaco */
-  z-index: -1;                      /* Fica atrás de tudo */
+  background: rgba(0,0,0,0.1);      /* Preto 10% opaco */
+  z-index: -1;   
+  
+  transition: filter 0.10s ease, background-color 0.10s ease;/* Fica atrás de tudo */
 }
 
 ::-moz-selection {
