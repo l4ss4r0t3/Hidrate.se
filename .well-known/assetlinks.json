@@ -1,8 +1,13 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "se.hidrate.app",
-    "sha256_cert_fingerprints": ["E9:29:1F:42:E2:1F:39:7C:E3:FD:14:40:13:15:0A:5C:F4:DF:DD:50:63:35:87:28:49:1F:08:D9:75:B0:81:65"]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "se.hidrate.app",
+      "sha256_cert_fingerprints": [
+        "E9:29:1F:42:E2:1F:39:7C:E3:FD:14:40:13:15:0A:5C:F4:DF:DD:50:63:35:87:28:49:1F:08:D9:75:B0:81:65", 
+        "CF:15:A6:C7:29:CA:1A:06:5B:2A:E2:00:68:12:06:54:1D:53:D1:4F:FB:58:04:8F:2A:25:82:09:2D:9D:18:45"
+      ]
+    }
   }
-}]
+]
