@@ -77,25 +77,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnBtl = document.getElementById("btn-btl");
 
   if (obj && btnBtl) {
-    let usandoSVG2 = localStorage.getItem("svg-garrafa") === "two";
+    let svgAtual = localStorage.getItem("svg-garrafa") || "one";
 
     function atualizarSVG() {
-      obj.setAttribute(
-        "data",
-        usandoSVG2
-          ? "./images/svgs/bottles/two.svg"
-          : "./images/svgs/bottles/one.svg"
-      );
+      const mapa = {
+        one:   "./images/svgs/bottles/one.svg",
+        two:   "./images/svgs/bottles/two.svg",
+        three: "./images/svgs/bottles/three.svg",
+      };
+      obj.setAttribute("data", mapa[svgAtual]);
     }
 
     atualizarSVG();
 
     btnBtl.addEventListener("click", () => {
-      usandoSVG2 = !usandoSVG2;
+      if (svgAtual === "one")       svgAtual = "two";
+      else if (svgAtual === "two")  svgAtual = "three";
+      else                          svgAtual = "one";
 
       atualizarSVG();
-
-      localStorage.setItem("svg-garrafa", usandoSVG2 ? "two" : "one");
+      localStorage.setItem("svg-garrafa", svgAtual);
     });
   }
 
