@@ -412,31 +412,24 @@
     // Escuta o evento disparado quando Android envia o token
     // ========================================================
     window.addEventListener('androidAuthReady', async (event) => {
-      const { token, email, uid } = event.detail;
-      
-      console.log('📱 Processando autenticação do Android...');
-      
-      try {
-        // Usa o token do Android para autenticar no Firebase Web
-        // O Firebase reconhece automaticamente tokens válidos
-        const credential = GoogleAuthProvider.credential(token);
-        await signInWithCredential(auth, credential);
-        
-        console.log('✅ Autenticação Android → Firebase concluída');
-        
-      } catch (erro) {
-        console.error('❌ Erro ao processar token do Android:', erro);
-        
-        // Fallback: Mesmo sem signInWithCredential funcionar,
-        // podemos usar os dados diretamente
-        console.log('⚠️ Usando fallback: criando sessão manualmente');
-        
-        // Simula usuário logado (onAuthStateChanged não vai disparar,
-        // então precisamos chamar manualmente)
-        const userMock = { uid, email };
-        escutarUsuario(userMock);
-      }
-    });
+  const { token, email, uid } = event.detail;
+  
+  console.log('📱 Auth Android recebida, usando dados direto');
+  
+  // NÃO tenta signInWithCredential, usa os dados direto
+  const userMock = { uid, email };
+  escutarUsuario(userMock);
+  
+  // Atualiza UI
+  const btnAuth = document.getElementById('btn-auth');
+  if (btnAuth) {
+    btnAuth.textContent = "Sair (Google)";
+    btnAuth.onclick = window.fazerLogout;
+  }
+  
+  const authWarning = document.getElementById('auth-warning');
+  if (authWarning) authWarning.style.display = 'none';
+});
     // 🆕 FIM DO NOVO ==========================================
 
     // ========================================================
