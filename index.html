@@ -414,21 +414,27 @@
     window.addEventListener('androidAuthReady', async (event) => {
   const { token, email, uid } = event.detail;
   
-  console.log('📱 Auth Android recebida, usando dados direto');
+  console.log('📱 Auth Android recebida');
   
-  // NÃO tenta signInWithCredential, usa os dados direto
-  const userMock = { uid, email };
-  escutarUsuario(userMock);
-  
-  // Atualiza UI
-  const btnAuth = document.getElementById('btn-auth');
-  if (btnAuth) {
-    btnAuth.textContent = "Sair (Google)";
-    btnAuth.onclick = window.fazerLogout;
-  }
-  
-  const authWarning = document.getElementById('auth-warning');
-  if (authWarning) authWarning.style.display = 'none';
+  // Aguarda o Firebase estar pronto
+  setTimeout(() => {
+    if (window.escutarUsuario) {
+      const userMock = { uid, email };
+      window.escutarUsuario(userMock);
+      
+      // Atualiza UI
+      const btnAuth = document.getElementById('btn-auth');
+      if (btnAuth) {
+        btnAuth.textContent = "Sair (Google)";
+        btnAuth.onclick = window.fazerLogout;
+      }
+      
+      const authWarning = document.getElementById('auth-warning');
+      if (authWarning) authWarning.style.display = 'none';
+      
+      console.log('✅ Escutando Firestore do usuário');
+    }
+  }, 500);
 });
     // 🆕 FIM DO NOVO ==========================================
 
@@ -558,6 +564,7 @@
     window.updateDoc = updateDoc;
     window.doc = doc;
     window.increment = increment;
+    window.escutarUsuario = escutarUsuario;
 
 </script>
 
