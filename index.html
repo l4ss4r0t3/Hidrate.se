@@ -383,9 +383,9 @@
         const resultado = await signInWithPopup(auth, provider);
 
         const fotoPerfil = document.getElementById('foto-perfil');
-        const nomePerfil = document.getElementById('nome-perfil');
-        if (fotoPerfil) fotoPerfil.src = resultado.user.photoURL || '';
-        if (nomePerfil) nomePerfil.textContent = resultado.user.displayName;
+const nomePerfil = document.getElementById('nome-perfil');
+if (fotoPerfil) fotoPerfil.src = (user.photoURL || '').replace('s96-c', 's400-c');
+if (nomePerfil) nomePerfil.textContent = user.displayName;
 
         console.log('✅ Login realizado com sucesso');
       } catch (erro) {
@@ -446,9 +446,9 @@
       if (user) {
 
         const fotoPerfil = document.getElementById('foto-perfil');
-        const nomePerfil = document.getElementById('nome-perfil');
-        if (fotoPerfil) fotoPerfil.src = user.photoURL || '';
-        if (nomePerfil) nomePerfil.textContent = user.displayName;
+const nomePerfil = document.getElementById('nome-perfil');
+if (fotoPerfil) fotoPerfil.src = (user.photoURL || '').replace('s96-c', 's400-c');
+if (nomePerfil) nomePerfil.textContent = user.displayName;
        
         if (btnAuth) {
           btnAuth.textContent = "Sair (Google)";

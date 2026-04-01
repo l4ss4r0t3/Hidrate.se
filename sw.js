@@ -4,7 +4,8 @@ const CACHE_NAME = 'hidrate-se-v2';
 const PRE_CACHE = [
   '/',
   '/index.html',
-  '/scripts/config.js' // coloque o caminho real do seu arquivo de config
+  '/scripts/config.js',
+  '/images/svgs/bottles/two.svg'
 ];
 
 // 1. Instalação: Salva apenas o essencial
