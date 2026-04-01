@@ -68,6 +68,41 @@ function limparLocalStorage() {
 }
 
 // =============================================================
+// 🌐 SYNC OFFLINE → FIREBASE
+// Quando a internet voltar, envia os dados do localStorage
+// para o Firebase automaticamente
+// =============================================================
+
+/**
+ * Tenta sincronizar o localStorage com o Firebase ao voltar online
+ */
+async function sincronizarComFirebase() {
+    const user = window.auth?.currentUser;
+    if (!user) return;
+
+    const dadosSalvos = localStorage.getItem('hidratese_dados');
+    if (!dadosSalvos) return;
+
+    try {
+        const dados = JSON.parse(dadosSalvos);
+        const userRef = window.doc(window.db, "usuarios", user.uid);
+        await window.updateDoc(userRef, {
+            totalBebido: dados.totalBebido,
+            metaDiaria: dados.metaDiaria
+        });
+        console.log('🔄 Dados sincronizados com Firebase ao voltar online');
+    } catch (e) {
+        console.error('❌ Erro ao sincronizar com Firebase:', e);
+    }
+}
+
+// Dispara sync automático ao reconectar à internet
+window.addEventListener('online', () => {
+    console.log('🌐 Conexão restaurada, sincronizando...');
+    sincronizarComFirebase();
+});
+
+// =============================================================
 // 🚀 CARREGAMENTO INICIAL
 // Tenta carregar dados salvos do localStorage
 // =============================================================
@@ -153,25 +188,30 @@ myBottle.addEventListener('load', function() {
 // Registra consumo de água e salva no Firebase ou localStorage
 // =============================================================
 btnBeber.addEventListener('click', async () => {
-    const valor = parseFloat(inputMl.value) || 0;  // Lê valor do input (0 se vazio)
-    const user = window.auth?.currentUser;          // Verifica se está logado
+    const valor = parseFloat(inputMl.value) || 0;
+    const user = window.auth?.currentUser;
 
     if (valor > 0) {
-        if (user) {
-            // ✅ MODO ONLINE: Incremento atômico no Firestore
-            // O Firebase sincroniza automaticamente com o onSnapshot
-            const userRef = window.doc(window.db, "usuarios", user.uid);
-            await window.updateDoc(userRef, { 
-                totalBebido: window.increment(valor) 
-            });
+        // 💾 Sempre salva no localStorage (backup offline)
+        window.totalBebido += valor;
+        salvarNoLocalStorage();
+
+        if (user && navigator.onLine) {
+            // ✅ MODO ONLINE: Incremento atomico no Firestore
+            try {
+                const userRef = window.doc(window.db, "usuarios", user.uid);
+                await window.updateDoc(userRef, { 
+                    totalBebido: window.increment(valor) 
+                });
+            } catch (e) {
+                console.warn('⚠️ Firebase indisponivel, salvo so no localStorage:', e);
+                window.atualizarVisual();
+            }
         } else {
-            // 💾 MODO OFFLINE: Atualiza localStorage
-            window.totalBebido += valor;
-            salvarNoLocalStorage();
+            // 📴 MODO OFFLINE: so localStorage (ja salvo acima)
             window.atualizarVisual();
         }
         
-        // Fecha o menu e limpa o campo após registrar
         fecharMenuCelular();
     }
 });
@@ -185,16 +225,23 @@ if (inputMeta) {
         const novaMeta = parseFloat(inputMeta.value) || 2000;
         const user = window.auth?.currentUser;
 
-        if (user && novaMeta > 0) {
-            // ✅ MODO ONLINE: Persiste a nova meta no Firestore
-            const userRef = window.doc(window.db, "usuarios", user.uid);
-            await window.updateDoc(userRef, { 
-                metaDiaria: novaMeta 
-            });
-        } else {
-            // 💾 MODO OFFLINE: Aplica a meta no localStorage
+        if (novaMeta > 0) {
+            // 💾 Sempre salva no localStorage (backup offline)
             window.metaDiaria = novaMeta;
             salvarNoLocalStorage();
+
+            if (user && navigator.onLine) {
+                // ✅ MODO ONLINE: Persiste a nova meta no Firestore
+                try {
+                    const userRef = window.doc(window.db, "usuarios", user.uid);
+                    await window.updateDoc(userRef, { 
+                        metaDiaria: novaMeta 
+                    });
+                } catch (e) {
+                    console.warn('⚠️ Firebase indisponivel, meta salva so no localStorage:', e);
+                }
+            }
+
             window.atualizarVisual();
         }
     });
@@ -214,20 +261,26 @@ btnZerar.addEventListener('click', async () => {
     }
 
     if (confirmar) {
-        if (user) {
+        // 💾 Sempre salva no localStorage (backup offline)
+        window.totalBebido = 0;
+        salvarNoLocalStorage();
+
+        if (user && navigator.onLine) {
             // ✅ MODO ONLINE: Zera o campo totalBebido no Firestore
-            const userRef = window.doc(window.db, "usuarios", user.uid);
-            await window.updateDoc(userRef, { 
-                totalBebido: 0 
-            });
+            try {
+                const userRef = window.doc(window.db, "usuarios", user.uid);
+                await window.updateDoc(userRef, { 
+                    totalBebido: 0 
+                });
+            } catch (e) {
+                console.warn('⚠️ Firebase indisponivel, zerado so no localStorage:', e);
+                window.atualizarVisual();
+            }
         } else {
-            // 💾 MODO OFFLINE: Zera o localStorage
-            window.totalBebido = 0;
-            salvarNoLocalStorage();
+            // 📴 MODO OFFLINE: so localStorage (ja salvo acima)
             window.atualizarVisual();
         }
         
-        // Fecha o menu após resetar
         fecharMenuCelular();
     }
 });
