@@ -16,6 +16,55 @@
   display: none !important;
 }
 
+#perfil {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  display: none;             /* Oculto por padrão */
+
+  /* Centraliza o conteúdo quando visível */
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0,0,0,0.5); /* Preto 50% opaco */
+  z-index: 9999;               /* Acima de tudo */
+}
+
+/* =============================================================
+   👁️ ESTADO VISÍVEL
+   Quando a classe 'show' é adicionada pelo JavaScript
+   ============================================================= */
+#perfil.show {
+  display: flex;
+}
+
+.conteudo-perfil {
+  width: 90%;                /* Responsivo em telas pequenas */
+  max-height: 90vh;          /* Não ultrapassa 90% da altura da tela */
+  max-width: 400px;          /* Largura máxima em telas grandes */
+
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;       /* Bordas arredondadas */
+
+  text-align: center;
+  overflow-y: auto;          /* Scroll se o conteúdo for muito longo */
+  scrollbar-width: none;     /* Oculta scrollbar no Firefox */
+}
+
+.conteudo-perfil img{
+  width: 50%;
+  height: auto;
+}
+
+/* Oculta scrollbar no Chrome, Safari e Edge */
+.conteudo2::-webkit-scrollbar {
+  display: none;
+}
+
 /* =============================================================
    🎭 OVERLAY DO POPUP (FUNDO ESCURO)
    Cobre toda a tela com uma camada semi-transparente

@@ -133,14 +133,15 @@
         <!-- Reseta o progresso do dia, voltando a garrafa para cheia -->
         <button type="button" id="btn-zerar">Encher Garrafa</button>
 
-        <!-- ====================================================
-             🔐 BOTÃO DE AUTENTICAÇÃO (DINÂMICO)
-             Texto e função mudam conforme estado de autenticação:
-             - Deslogado: "Login com Google" → window.fazerLogin()
-             - Logado: "Sair (Google)" → window.fazerLogout()
-             Controlado por: onAuthStateChanged (Firebase)
-             ==================================================== -->
+        <div class="submenu">
+          <button class="submenu-btn">Conta</button>
+          <div class="submenu-content">
+
+        <button type="button" onclick="abrirPopup('perfil')">Perfil</button>
         <button type="button" id="btn-auth">Login com Google</button>
+
+        </div>
+        </div>
 
         <div class="submenu">
           <button class="submenu-btn">Utilidades</button>
@@ -217,6 +218,20 @@
     </div>
   </main>
 
+  <div id="perfil">
+    <div class="conteudo-perfil">
+
+      <h2>Perfil</h2>
+      <img id="foto-perfil" src="images/svgs/buttons/x.svg" alt="Foto do perfil">
+      <p id="nome-perfil"></p>
+
+      <button onclick="fecharPopup('perfil');" class="text-button">
+        Fechar
+      </button>
+
+    </div>
+  </div>
+
   <!-- ============================================================
        💬 POPUP DE INTRODUÇÃO
        Modal que explica o funcionamento do app na primeira visita.
@@ -271,11 +286,6 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       🔥 FIREBASE SDK (MÓDULOS ES6)
-       Carregamento do Firebase via CDN com import maps.
-       Permite usar sintaxe moderna de importação sem bundler.
-       ============================================================ -->
   <script type="importmap">
   {
     "imports": {
@@ -286,10 +296,6 @@
   }
   </script>
 
-  <!-- ============================================================
-     📱 ANDROID BRIDGE
-     Comunicação bidirecional entre WebView e site
-     ============================================================ -->
 <script>
   // Detecta se está rodando no app Android
   window.isAndroidApp = function() {
@@ -331,15 +337,13 @@
 </script>
 
   <script type="module">
-    // ========================================================
-    // 📦 IMPORTAÇÕES DO FIREBASE
-    // ========================================================
+    
     import { initializeApp } from 'firebase/app';
     import { 
       getAuth, 
       GoogleAuthProvider, 
       signInWithPopup,
-      signInWithCredential, // 🆕 NOVO - Para usar token do Android
+      signInWithCredential,
       signOut, 
       onAuthStateChanged 
     } from 'firebase/auth';
@@ -354,13 +358,8 @@
       increment 
     } from 'firebase/firestore';
 
-    // Importa as credenciais do Firebase do arquivo de config
     import { firebaseConfig } from './scripts/config.js';
 
-    // ========================================================
-    // 🔥 INICIALIZAÇÃO DO FIREBASE
-    // Instancia os serviços de autenticação e banco de dados
-    // ========================================================
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
@@ -368,41 +367,35 @@
     localCache: persistentLocalCache({
     tabManager: persistentMultipleTabManager()
     })
-  });
+    });
 
     const provider = new GoogleAuthProvider();
 
-    // ========================================================
-    // 🔐 AUTENTICAÇÃO COM GOOGLE
-    // ========================================================
-    
-    /**
-     * Realiza login com popup do Google OU via Android nativo
-     */
     window.fazerLogin = async function() {
-      // 🆕 NOVO - Verificar se está no app Android
+      
       if (window.isAndroidApp && window.isAndroidApp()) {
         console.log('📱 Solicitando login via Android...');
         AndroidAuth.requestLogin();
-        return; // Android vai chamar receiveAuthFromAndroid quando pronto
+        return;
       }
 
-      // ✅ CÓDIGO ORIGINAL - Login web normal
-      const provider = new GoogleAuthProvider();
       try {
-        await signInWithPopup(auth, provider);
+        const resultado = await signInWithPopup(auth, provider);
+
+        const fotoPerfil = document.getElementById('foto-perfil');
+        const nomePerfil = document.getElementById('nome-perfil');
+        if (fotoPerfil) fotoPerfil.src = resultado.user.photoURL || '';
+        if (nomePerfil) nomePerfil.textContent = resultado.user.displayName;
+
         console.log('✅ Login realizado com sucesso');
       } catch (erro) {
         console.error('❌ Erro no login:', erro);
         alert('Erro ao fazer login. Tente novamente.');
       }
+
     };
 
-    /**
-     * Realiza logout e volta para modo offline (localStorage)
-     */
     window.fazerLogout = async function() {
-      // 🆕 NOVO - Notificar Android sobre logout
       if (window.isAndroidApp && window.isAndroidApp()) {
         AndroidAuth.requestLogout();
       }
@@ -415,22 +408,16 @@
       }
     };
 
-    // 🆕 NOVO =================================================
-    // 📱 PROCESSAR AUTENTICAÇÃO DO ANDROID
-    // Escuta o evento disparado quando Android envia o token
-    // ========================================================
     window.addEventListener('androidAuthReady', async (event) => {
   const { token, email, uid } = event.detail;
   
   console.log('📱 Auth Android recebida');
   
-  // Aguarda o Firebase estar pronto
   setTimeout(() => {
     if (window.escutarUsuario) {
       const userMock = { uid, email };
       window.escutarUsuario(userMock);
       
-      // Atualiza UI
       const btnAuth = document.getElementById('btn-auth');
       if (btnAuth) {
         btnAuth.textContent = "Sair (Google)";
@@ -444,17 +431,9 @@
     }
   }, 500);
 });
-    // 🆕 FIM DO NOVO ==========================================
-
-    // ========================================================
-    // 🔔 VARIÁVEL PARA GERENCIAR LISTENERS DO FIRESTORE
-    // ========================================================
+    
     let unsubscribe = null;
 
-    // ========================================================
-    // 👀 OBSERVADOR DE ESTADO DE AUTENTICAÇÃO
-    // Gerencia transições entre modo offline ↔ online
-    // ========================================================
     onAuthStateChanged(auth, (user) => {
       const btnAuth = document.getElementById('btn-auth');
       const authWarning = document.getElementById('auth-warning');
@@ -465,7 +444,12 @@
       }
    
       if (user) {
-        // ✅ USUÁRIO LOGADO
+
+        const fotoPerfil = document.getElementById('foto-perfil');
+        const nomePerfil = document.getElementById('nome-perfil');
+        if (fotoPerfil) fotoPerfil.src = user.photoURL || '';
+        if (nomePerfil) nomePerfil.textContent = user.displayName;
+       
         if (btnAuth) {
           btnAuth.textContent = "Sair (Google)";
           btnAuth.onclick = window.fazerLogout;
@@ -475,7 +459,7 @@
         escutarUsuario(user);
    
       } else {
-        // ❌ USUÁRIO DESLOGADO
+        
         if (btnAuth) {
           btnAuth.textContent = "Login com Google";
           btnAuth.onclick = window.fazerLogin;
@@ -498,9 +482,6 @@
       }
     });
 
-    // ========================================================
-    // 🔥 FIRESTORE - SINCRONIZAÇÃO
-    // ========================================================
     function escutarUsuario(user) {
       const userRef = doc(db, "usuarios", user.uid);
    
@@ -540,9 +521,6 @@
       });
     }
 
-    // ========================================================
-    // 🎨 ATUALIZAR INTERFACE
-    // ========================================================
     function atualizarUI() {
       if (typeof window.atualizarVisual === 'function') {
         window.atualizarVisual();
@@ -552,9 +530,6 @@
       if (inputMeta) inputMeta.value = window.metaDiaria;
     }
 
-    // ========================================================
-    // 🔄 RESETAR ESTADO
-    // ========================================================
     function resetarEstado() {
       if (typeof window.atualizarVisual === 'function') {
         window.atualizarVisual();
@@ -564,9 +539,6 @@
       if (inputMeta) inputMeta.value = window.metaDiaria;
     }
 
-    // ========================================================
-    // 🌍 EXPOSIÇÃO GLOBAL
-    // ========================================================
     window.db = db;
     window.auth = auth;
     window.updateDoc = updateDoc;
@@ -576,11 +548,6 @@
 
 </script>
 
-  <!-- ============================================================
-       📜 SCRIPTS EXTERNOS (LÓGICA DA APLICAÇÃO)
-       Carregados após Firebase para garantir disponibilidade
-       das funções expostas globalmente.
-       ============================================================ -->
 
   <script src="scripts/sw_config.js"></script>
   <script src="scripts/bottles.js"></script>  <!-- Manipulação da garrafa SVG -->
