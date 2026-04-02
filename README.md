@@ -21,7 +21,7 @@ Em vez de números frios em uma planilha, você vê uma **garrafa digital animad
 - 🎨 **Visual e Intuitivo**: Acompanhe seu progresso com uma garrafa que responde em tempo real
 - 🎯 **Metas Personalizáveis**: Defina sua meta diária baseada no seu peso e rotina
 - 🔐 **Sincronização em Nuvem**: Seus dados seguros e acessíveis de qualquer lugar
-- 📱 **Funciona Offline**: Continue registrando mesmo sem internet
+- 📱 **Funciona Offline**: Continue registrando mesmo sem internet (após o primeiro acesso)
 - 🎉 **Celebração de Conquistas**: Feedback positivo ao atingir sua meta
 
 ---
@@ -30,7 +30,7 @@ Em vez de números frios em uma planilha, você vê uma **garrafa digital animad
 
 ### 🎯 Controle Principal
 - **Meta Diária Customizável**: Configure quantos ml você precisa beber (padrão: 2000ml)
-- **Registro Rápido**: Digite a quantidade e clique em "Beber Água"
+- **Registro Rápido**: Digite a quantidade ingerida e clique em "Beber Água"
 - **Reset Diário**: Botão "Encher Garrafa" para começar um novo dia
 - **Feedback Visual**: Garrafa SVG animada que esvazia proporcionalmente
 
@@ -174,7 +174,7 @@ hidrate.se/
 ### ✅ Pré-requisitos
 
 - Navegador web moderno (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
-- Conexão com internet (opcional — app funciona offline)
+- Conexão com internet (opcional — app funciona offline após o primeiro acesso)
 - Conta Google (opcional — para sincronização na nuvem)
 
 ### 📥 Instalação Local
@@ -276,7 +276,7 @@ service cloud.firestore {
 
 #### Temas
 - **📸 Escolher Imagem de Fundo**: Adicione uma imagem personalizada
-- **Aplicar Imagem de Fundo**: Confirma a imagem escolhida
+- **Remover Imagem de Fundo**: Remove a imagem aplicada
 - **Trocar Garrafa**: 🍼 Alterna entre diferentes designs de garrafa
 - **Inverter Cores**: 🌓 Alterna entre tema claro e escuro
 
