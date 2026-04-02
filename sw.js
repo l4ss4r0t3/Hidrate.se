@@ -3,29 +3,32 @@ const CACHE_NAME = 'hidrate-se-v3.0.2';
 // O MÍNIMO para o app não abrir em branco (Página inicial + Script Principal)
 const PRE_CACHE = [
   '/',
-  'index.html',
-  'styles/body.js',
-  'styles/bottles.js',
-  'styles/fonts.js',
-  'styles/menus.js',
-  'styles/popups.js',
-  'scripts/bottles.js',
-  'scripts/buttons.js',
-  'scripts/config.js',
-  'scripts/popups.js',
-  'scripts/themes.js',
-  'images/svgs/buttons/x.svg',
-  'images/svgs/buttons/burguer.svg',
-  'images/svgs/bottles/one.svg',
-  'images/svgs/bottles/two.svg',
-  'images/svgs/bottles/three.svg'
+  '/index.html',
+  '/styles/body.css',
+  '/styles/bottles.css',
+  '/styles/fonts.css',
+  '/styles/menus.css',
+  '/styles/popups.css',
+  '/scripts/bottles.js',
+  '/scripts/buttons.js',
+  '/scripts/config.js',
+  '/scripts/popups.js',
+  '/scripts/themes.js',
+  '/images/svgs/buttons/x.svg',
+  '/images/svgs/buttons/burguer.svg',
+  '/images/svgs/bottles/one.svg',
+  '/images/svgs/bottles/two.svg',
+  '/images/svgs/bottles/three.svg'
 ];
 
 // 1. Instalação: Salva apenas o essencial
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // Força o SW novo a virar o "chefe" imediatamente
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRE_CACHE))
+    caches.open(CACHE_NAME)
+      .then((cache) =>
+        Promise.allSettled(PRE_CACHE.map((url) => cache.add(url)))
+      )
+      .then(() => self.skipWaiting())
   );
 });
 
