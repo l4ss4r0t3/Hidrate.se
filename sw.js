@@ -1,15 +1,29 @@
-const CACHE_NAME = 'hidrate-se-v2';
+const CACHE_NAME = 'hidrate-se-v3.0.1';
 
 // O MÍNIMO para o app não abrir em branco (Página inicial + Script Principal)
 const PRE_CACHE = [
   '/',
   '/index.html',
+  '/styles/body.js',
+  '/styles/bottles.js',
+  '/styles/fonts.js',
+  '/styles/menus.js',
+  '/styles/popups.js',
+  '/scripts/bottles.js',
+  '/scripts/buttons.js',
   '/scripts/config.js',
-  '/images/svgs/bottles/two.svg'
+  '/scripts/popups.js',
+  '/scripts/themes.js',
+  '/images/svgs/buttons/x.svg',
+  '/images/svgs/buttons/burguer.svg',
+  '/images/svgs/bottles/one.svg',
+  '/images/svgs/bottles/two.svg',
+  '/images/svgs/bottles/three.svg'
 ];
 
 // 1. Instalação: Salva apenas o essencial
 self.addEventListener('install', (event) => {
+  self.skipWaiting(); // Força o SW novo a virar o "chefe" imediatamente
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(PRE_CACHE))
   );
@@ -39,6 +53,23 @@ self.addEventListener('fetch', (event) => {
 
         return networkResponse;
       });
+    })
+  );
+});
+
+// 3. Ativação: Limpa caches antigos
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          // Se o cache encontrado não for o atual (v3.0.1), delete-o!
+          if (cache !== CACHE_NAME) {
+            console.log('Removendo cache antigo:', cache);
+            return caches.delete(cache);
+          }
+        })
+      );
     })
   );
 });
