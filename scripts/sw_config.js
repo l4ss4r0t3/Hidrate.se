@@ -7,7 +7,7 @@ if ('serviceWorker' in navigator) {
     .then(registration => {
       console.log('Porteiro (SW) ativo no escopo:', registration.scope);
       
-      // Dica: Isso força uma verificação de atualização toda vez que o app abre
+      // Isso força uma verificação de atualização toda vez que o app abre
       registration.update();
     })
     .catch(error => {
@@ -15,3 +15,12 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+let refreshing = false;
+// Detecta quando o Service Worker novo assume o controle (claim)
+navigator.serviceWorker.addEventListener('controllerchange', () => {
+  if (!refreshing) {
+    window.location.reload(); // Recarrega a página automaticamente com o código novo
+    refreshing = true;
+  }
+});
