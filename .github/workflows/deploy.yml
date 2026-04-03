@@ -19,6 +19,6 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./*, !.git"
-          target: "/var/www/html"
+          target: "/var/www/html/test"
           strip_components: 0
           overwrite: true
