@@ -30,19 +30,24 @@ async function carregarDoFirebase(user) {
             const diaRef = window.doc(window.db, "usuarios", user.uid, "historico", dataStr);
             const diaSnap = await window.getDoc(diaRef);
 
-            if (diaSnap.exists()) {
-                const diaData = diaSnap.data();
+            const diaData = diaSnap.exists() ? diaSnap.data() : {};
 
-                // Carrega os registros individuais do dia
-                const registrosRef = window.collection(
-                    window.db, "usuarios", user.uid, "historico", dataStr, "registros"
-                );
-                const registrosSnap = await window.getDocs(registrosRef);
-                const registros = registrosSnap.docs.map(d => d.data());
-                registros.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+const registrosRef = window.collection(
+    window.db, "usuarios", user.uid, "historico", dataStr, "registros"
+);
 
-                dias.push({ ...diaData, registros });
-            }
+const registrosSnap = await window.getDocs(registrosRef);
+const registros = registrosSnap.docs.map(d => d.data());
+registros.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+
+if (registros.length > 0 || diaSnap.exists()) {
+    dias.push({
+        data: dataStr,
+        totalBebido: diaData.totalBebido || 0,
+        metaDiaria: diaData.metaDiaria || window.metaDiaria,
+        registros
+    });
+}
         } catch (e) {
             console.error(`❌ Erro ao carregar dia ${dataStr}:`, e);
         }
