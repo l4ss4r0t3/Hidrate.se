@@ -1,26 +1,54 @@
+// =============================================================
+// ⚙️ SW_CONFIG.JS - CONFIGURAÇÃO DO SERVICE WORKER (PWA)
+// =============================================================
+// Este arquivo controla:
+// - Registro do Service Worker (sw.js)
+// - Verificação de atualizações a cada abertura do app
+// - Recarga automática quando uma nova versão assume o controle
+// =============================================================
+
+
+// =============================================================
+// 📋 REGISTRO DO SERVICE WORKER
+// Só executa se o browser suportar Service Workers.
+// O registro acontece após o carregamento completo da página
+// para não competir com recursos críticos de inicialização.
+// =============================================================
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    
-    navigator.serviceWorker.register('./sw.js', { 
-      updateViaCache: 'none' 
-    })
-    .then(registration => {
-      console.log('Porteiro (SW) ativo no escopo:', registration.scope);
-      
-      // Isso força uma verificação de atualização toda vez que o app abre
-      registration.update();
-    })
-    .catch(error => {
-      console.log('Erro ao contratar o porteiro:', error);
+    window.addEventListener('load', () => {
+
+        navigator.serviceWorker
+            .register('./sw.js', {
+                updateViaCache: 'none' // Sempre busca sw.js atualizado na rede
+            })
+            .then(registration => {
+                console.log('✅ Service Worker registrado. Escopo:', registration.scope);
+
+                // Força verificação de nova versão a cada abertura do app.
+                // Sem isso, o browser só verifica após 24h por padrão.
+                registration.update();
+            })
+            .catch(erro => {
+                console.error('❌ Erro ao registrar o Service Worker:', erro);
+            });
     });
-  });
 }
 
+
+// =============================================================
+// 🔄 RECARGA AUTOMÁTICA AO ATUALIZAR
+// Quando um novo Service Worker assume o controle (via claim),
+// a página é recarregada para garantir que o usuário está
+// sempre usando a versão mais recente do app.
+//
+// A flag 'refreshing' evita recargas em loop caso o evento
+// 'controllerchange' seja disparado mais de uma vez.
+// =============================================================
 let refreshing = false;
-// Detecta quando o Service Worker novo assume o controle (claim)
+
 navigator.serviceWorker.addEventListener('controllerchange', () => {
-  if (!refreshing) {
-    window.location.reload(); // Recarrega a página automaticamente com o código novo
-    refreshing = true;
-  }
+    if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+    }
 });
