@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   configurarPopup("meu-popup", ".conteudo");
   configurarPopup("meu-popup2", ".conteudo2");
   configurarPopup("perfil", ".conteudo-perfil");
+  configurarPopup("historico", ".conteudo-historico");
 
   const popup = document.getElementById("meu-popup");
   const jaViu = localStorage.getItem("intro-vista");

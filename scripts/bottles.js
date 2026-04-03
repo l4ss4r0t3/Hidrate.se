@@ -214,6 +214,31 @@ btnBeber.addEventListener('click', async () => {
         
         fecharMenuCelular();
     }
+
+    const registroIndividual = {
+    quantidade: valor,
+    hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    timestamp: new Date().toISOString()
+};
+
+// localStorage
+const hoje = new Date().toLocaleDateString('pt-BR');
+const chave = `hidratese_registros_${hoje}`;
+const registros = JSON.parse(localStorage.getItem(chave)) || [];
+registros.push(registroIndividual);
+localStorage.setItem(chave, JSON.stringify(registros));
+
+// Firebase (se online)
+if (user && navigator.onLine) {
+    const registroRef = window.doc(
+        window.db,
+        "usuarios", user.uid,
+        "historico", hoje,
+        "registros", registroIndividual.timestamp // ID único
+    );
+    await window.setDoc(registroRef, registroIndividual);
+}
+
 });
 
 // =============================================================

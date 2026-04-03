@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hidrate-se-v3.0.2';
+const CACHE_NAME = 'hidrate-se-v3.1.2';
 
 // O MÍNIMO para o app não abrir em branco (Página inicial + Script Principal)
 const PRE_CACHE = [
@@ -9,10 +9,14 @@ const PRE_CACHE = [
   '/styles/fonts.css',
   '/styles/menus.css',
   '/styles/popups.css',
+  '/scripts/android.js',
   '/scripts/bottles.js',
   '/scripts/buttons.js',
   '/scripts/config.js',
+  '/scripts/firebase.js',
+  '/scripts/history.js',
   '/scripts/popups.js',
+  '/scripts/reset.js',
   '/scripts/themes.js',
   '/images/svgs/buttons/x.svg',
   '/images/svgs/buttons/burguer.svg',

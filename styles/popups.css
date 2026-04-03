@@ -1,12 +1,13 @@
 /* =============================================================
-   💬 POPUPS.CSS - ESTILOS DO POPUP DE INTRODUÇÃO
+   💬 POPUPS.CSS - ESTILOS DE TODOS OS POPUPS DA APLICAÇÃO
    =============================================================
    Este arquivo define:
-   - Modal de boas-vindas que aparece na primeira visita
-   - Overlay escuro de fundo
-   - Container de conteúdo centralizado
-   - Animações de exibição/ocultação
+   - Overlay escuro compartilhado por todos os popups
+   - Container de conteúdo centralizado e reutilizável
+   - Estilos específicos de cada popup
+   - Histórico de consumo diário
    ============================================================= */
+
 
 /* =============================================================
    🚫 CLASSE UTILITÁRIA DE OCULTAÇÃO
@@ -16,179 +17,194 @@
   display: none !important;
 }
 
-#perfil {
+
+/* =============================================================
+   🎭 OVERLAY BASE — COMPARTILHADO POR TODOS OS POPUPS
+   Cobre toda a tela com fundo escuro semi-transparente.
+   Centraliza o conteúdo vertical e horizontalmente.
+   Uso: adicionar classe .popup-overlay ao elemento wrapper
+   ============================================================= */
+.popup-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
 
-  display: none;             /* Oculto por padrão */
-
-  /* Centraliza o conteúdo quando visível */
+  display: none;
   justify-content: center;
   align-items: center;
 
-  background: rgba(0,0,0,0.5); /* Preto 50% opaco */
-  z-index: 9999;               /* Acima de tudo */
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
 }
 
-/* =============================================================
-   👁️ ESTADO VISÍVEL
-   Quando a classe 'show' é adicionada pelo JavaScript
-   ============================================================= */
-#perfil.show {
+/* Ativado via JavaScript adicionando a classe .show */
+.popup-overlay.show {
   display: flex;
 }
 
-.conteudo-perfil {
-  width: 90%;                /* Responsivo em telas pequenas */
-  max-height: 90vh;          /* Não ultrapassa 90% da altura da tela */
-  max-width: 400px;          /* Largura máxima em telas grandes */
+
+/* =============================================================
+   📦 MODAL BASE — COMPARTILHADO POR TODOS OS POPUPS
+   Caixa branca centralizada com scroll interno oculto.
+   Uso: adicionar classe .popup-modal ao elemento interno
+   ============================================================= */
+.popup-modal {
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
 
   background: #fff;
   padding: 20px;
-  border-radius: 12px;       /* Bordas arredondadas */
+  border-radius: 12px;
 
   text-align: center;
-  overflow-y: auto;          /* Scroll se o conteúdo for muito longo */
-  scrollbar-width: none;     /* Oculta scrollbar no Firefox */
+  overflow-y: auto;
+  scrollbar-width: none;        /* Firefox */
 }
 
-.conteudo-perfil img{
+.popup-modal::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari, Edge */
+}
+
+
+/* =============================================================
+   🖼️ POPUP DE PERFIL (#perfil)
+   Exibe foto e nome do usuário logado via Google.
+   ============================================================= */
+.popup-modal img {
   width: 50%;
   height: auto;
 }
 
-/* Oculta scrollbar no Chrome, Safari e Edge */
-.conteudo2::-webkit-scrollbar {
-  display: none;
-}
 
 /* =============================================================
-   🎭 OVERLAY DO POPUP (FUNDO ESCURO)
-   Cobre toda a tela com uma camada semi-transparente
+   🧮 POPUP DE CALCULADORA (#meu-popup2)
+   Permite calcular a meta diária com base no peso corporal.
    ============================================================= */
-#meu-popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  display: none;             /* Oculto por padrão */
-
-  /* Centraliza o conteúdo quando visível */
-  justify-content: center;
-  align-items: center;
-
-  background: rgba(0,0,0,0.5); /* Preto 50% opaco */
-  z-index: 9999;               /* Acima de tudo */
-}
-
-/* =============================================================
-   👁️ ESTADO VISÍVEL
-   Quando a classe 'show' é adicionada pelo JavaScript
-   ============================================================= */
-#meu-popup.show {
-  display: flex;
-}
-
-/* =============================================================
-   📦 CONTAINER DE CONTEÚDO
-   Caixa branca centralizada com o texto de introdução
-   ============================================================= */
-.conteudo {
-  width: 90%;                /* Responsivo em telas pequenas */
-  max-height: 90vh;          /* Não ultrapassa 90% da altura da tela */
-  max-width: 400px;          /* Largura máxima em telas grandes */
-
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;       /* Bordas arredondadas */
-
-  text-align: center;
-  overflow-y: auto;          /* Scroll se o conteúdo for muito longo */
-  scrollbar-width: none;     /* Oculta scrollbar no Firefox */
-}
-
-/* Oculta scrollbar no Chrome, Safari e Edge */
-.conteudo::-webkit-scrollbar {
-  display: none;
-}
-
-/* =============================================================
-   🎭 OVERLAY DO POPUP (FUNDO ESCURO)
-   Cobre toda a tela com uma camada semi-transparente
-   ============================================================= */
-#meu-popup2 {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  display: none;             /* Oculto por padrão */
-
-  /* Centraliza o conteúdo quando visível */
-  justify-content: center;
-  align-items: center;
-
-  background: rgba(0,0,0,0.5); /* Preto 50% opaco */
-  z-index: 9999;               /* Acima de tudo */
-}
-
-/* =============================================================
-   👁️ ESTADO VISÍVEL
-   Quando a classe 'show' é adicionada pelo JavaScript
-   ============================================================= */
-#meu-popup2.show {
-  display: flex;
-}
-
-.conteudo2 {
-  width: 90%;                /* Responsivo em telas pequenas */
-  max-height: 90vh;          /* Não ultrapassa 90% da altura da tela */
-  max-width: 400px;          /* Largura máxima em telas grandes */
-
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;       /* Bordas arredondadas */
-
-  text-align: center;
-  overflow-y: auto;          /* Scroll se o conteúdo for muito longo */
-  scrollbar-width: none;     /* Oculta scrollbar no Firefox */
-}
-
-/* Oculta scrollbar no Chrome, Safari e Edge */
-.conteudo2::-webkit-scrollbar {
-  display: none;
-}
-
-#calcular-btn, #peso-input, #aplicar-meta-btn {
+#calcular-btn,
+#peso-input,
+#aplicar-meta-btn {
   padding: 20px;
   font-size: 16px;
-  margin-top: 10px;
   margin: auto;
+  margin-top: 10px;
 
   background-color: #ffffff;
   text-align: center;
-
   cursor: pointer;
-  }
+}
 
-  #calcular-btn, #aplicar-meta-btn {
-    border: none;
-    margin: auto;
-  }
+#calcular-btn,
+#aplicar-meta-btn {
+  border: none;
+}
 
-  .calculadora {
-    display: flex;
-justify-content: center;
+.calculadora {
+  display: flex;
+  justify-content: center;
 
-width: 90%;
-margin:auto;
+  width: 90%;
+  margin: auto;
+  margin-top: 20px;
 
-    gap: 10px;
-    margin-top: 20px;
-  } 
+  gap: 10px;
+}
+
+
+/* =============================================================
+   📚 POPUP DE HISTÓRICO (#historico-popup)
+   Exibe os últimos 7 dias de consumo de água.
+   O modal herda .popup-modal e adiciona alinhamento à esquerda.
+   ============================================================= */
+.historico-modal {
+  text-align: left;
+}
+
+/* Cabeçalho com título e botão de fechar */
+.historico-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.historico-modal-header h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.historico-modal-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+  line-height: 1;
+}
+
+/* Card de cada dia */
+.historico-dia {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+/* Linha superior: data à esquerda, total à direita */
+.historico-dia-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.historico-data {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.historico-total {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Verde quando a meta do dia foi atingida */
+.historico-total.meta-atingida {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+/* Lista de registros individuais dentro do card */
+.historico-registros {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.historico-registro-individual {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+  border-top: 1px solid #f0f0f0;
+  color: #555;
+}
+
+.registro-hora {
+  color: #888;
+}
+
+/* Azul para destacar a quantidade registrada */
+.registro-quantidade {
+  color: #1565c0;
+  font-weight: 500;
+}
+
+/* Estados de carregamento e lista vazia */
+.historico-carregando,
+.historico-vazio {
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  padding: 24px 0;
+}

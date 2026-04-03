@@ -27,7 +27,7 @@
   <link rel="stylesheet" href="styles/bottles.css">   <!-- Estilos da garrafa SVG -->
   <link rel="stylesheet" href="styles/fonts.css">     <!-- Tipografia customizada -->
   <link rel="stylesheet" href="styles/menus.css">     <!-- Estilos do menu dropdown -->
-  <link rel="stylesheet" href="styles/popups.css">    <!-- Estilos do popup -->
+  <link rel="stylesheet" href="styles/popups.css">    <!-- Estilos de todos os popups -->
 
   <!-- ============================================================
        🎨 TEMA DO NAVEGADOR
@@ -66,24 +66,22 @@
 </head>
 
 <body>
-    
+
   <!-- ============================================================
        📋 CABEÇALHO — MENU DROPDOWN PRINCIPAL
        Menu suspenso no canto superior direito contendo:
        - Input de meta diária (ml)
        - Input de quantidade a beber (ml)
-       - Botões de ação (beber, encher, tema)
-       - Botão de autenticação (login/logout)
-       - Links externos (manual, políticas, excluir conta)
-       
-       Comportamento: Abre/fecha via JavaScript (buttons.js)
+       - Botões de ação (beber, encher)
+       - Submenus: Conta, Utilidades, Temas, Políticas
+       Comportamento: abre/fecha via buttons.js
        ============================================================ -->
   <header>
     <div class="dropdown">
 
       <!-- Botão de abertura do menu (ícone hambúrguer SVG) -->
       <button class="dropbtn" type="button" aria-label="Abrir Menu">
-        <img src="images/svgs/buttons/burguer.svg" alt="Menu" width="24" height="24">        
+        <img src="images/svgs/buttons/burguer.svg" alt="Menu" width="24" height="24">
       </button>
 
       <!-- Conteúdo do menu (inicialmente oculto via CSS) -->
@@ -91,9 +89,9 @@
 
         <!-- ====================================================
              ⚠️ AVISO DE AUTENTICAÇÃO
-             Exibido apenas quando usuário não está logado.
-             Informa que dados não serão salvos sem login.
-             Controlado por: onAuthStateChanged (Firebase)
+             Exibido apenas quando o usuário não está logado.
+             Informa que os dados não serão salvos sem login.
+             Controlado por: onAuthStateChanged (firebase.js)
              ==================================================== -->
         <p id="auth-warning" style="display:none; background-color: white; color: #ff4444; font-weight: bold; text-align: center; margin: 0; padding: 10px;">
           ⚠️ Faça login para SALVAR seus REGISTROS.
@@ -101,8 +99,8 @@
 
         <!-- ====================================================
              🎯 INPUT: META DIÁRIA
-             Define a quantidade de água (ml) a ser consumida no dia.
-             Valor padrão: 2000ml
+             Define a quantidade de água (ml) a consumir no dia.
+             Valor padrão: 2000ml.
              Sincronizado com Firebase quando logado.
              ==================================================== -->
         <label for="meta-input">Sua Meta Diária</label>
@@ -113,9 +111,9 @@
 
         <!-- ====================================================
              💧 INPUT: QUANTIDADE A BEBER
-             Campo para registrar a quantidade de água consumida.
-             Após clicar em "Beber Água", este valor é adicionado
-             ao total e o campo é limpo automaticamente.
+             Registra a quantidade de água consumida agora.
+             Após clicar em "Beber Água", o valor é somado ao
+             total do dia e o campo é limpo automaticamente.
              ==================================================== -->
         <label for="ml-input">Água a Beber</label>
         <span class="input-wrapper">
@@ -125,74 +123,62 @@
 
         <!-- ====================================================
              🔵 BOTÕES DE AÇÃO PRINCIPAL
+             btn-beber → registra consumo e atualiza a garrafa
+             btn-zerar → reseta o dia, voltando a garrafa para cheia
              ==================================================== -->
-        
-        <!-- Registra o consumo de água e atualiza o visual da garrafa -->
         <button type="button" id="btn-beber">Beber Água</button>
-
-        <!-- Reseta o progresso do dia, voltando a garrafa para cheia -->
         <button type="button" id="btn-zerar">Encher Garrafa</button>
 
+        <!-- ====================================================
+             👤 SUBMENU: CONTA
+             Acesso ao perfil, histórico e autenticação.
+             ==================================================== -->
         <div class="submenu">
           <button class="submenu-btn">Conta</button>
           <div class="submenu-content">
-
-        <button type="button" onclick="abrirPopup('perfil')">Perfil</button>
-        <button type="button" id="btn-auth">Login com Google</button>
-
-        </div>
-        </div>
-
-        <div class="submenu">
-          <button class="submenu-btn">Utilidades</button>
-          <div class="submenu-content">
-
-        <!-- Botão para abrir popup de introdução -->
-        <button type="button" onclick="abrirPopup('meu-popup')">Introdução</button>
-        <button type="button" onclick="abrirPopup('meu-popup2')">Calculadora</button>
-
-
-        </div>
-        </div>
-
-        <!-- ====================================================
-             🎨 SUBMENU: TEMAS
-             Controles para personalização visual do app
-             ==================================================== -->
-        <div class="submenu">
-          <button class="submenu-btn">Temas</button>
-          <div class="submenu-content">
-
-            <!-- Input para definir imagem de fundo personalizada -->
-             <label for="bg-file" class="bg-file">📸 - Escolher Imagem de Fundo</label>
-            <input type="file" id="bg-file" accept="image/*">
-            <button type="button" id="btn-bg">Aplicar/Remover Imagem de Fundo</button>
-
-            <button type="button" id="btn-btl">Trocar Garrafa</button>
-          
-            <!-- Alterna entre tema claro e escuro (filtro CSS invert) -->
-            <button type="button" id="btn-tema">Inverter Cores</button>
-
+            <button type="button" onclick="abrirPopup('perfil')">Perfil</button>
+            <button type="button" onclick="abrirHistorico()">Histórico</button>
+            <button type="button" id="btn-auth">Login com Google</button>
           </div>
         </div>
 
         <!-- ====================================================
-             📚 SUBMENU: POLÍTICAS E DOCUMENTAÇÃO
-             Links para documentos legais e suporte
+             🛠️ SUBMENU: UTILIDADES
+             Ferramentas auxiliares: introdução e calculadora.
+             ==================================================== -->
+        <div class="submenu">
+          <button class="submenu-btn">Utilidades</button>
+          <div class="submenu-content">
+            <button type="button" onclick="abrirPopup('meu-popup')">Introdução</button>
+            <button type="button" onclick="abrirPopup('meu-popup2')">Calculadora</button>
+          </div>
+        </div>
+
+        <!-- ====================================================
+             🎨 SUBMENU: TEMAS
+             Personalização visual: imagem de fundo, garrafa e cores.
+             ==================================================== -->
+        <div class="submenu">
+          <button class="submenu-btn">Temas</button>
+          <div class="submenu-content">
+            <label for="bg-file" class="bg-file">📸 - Escolher Imagem de Fundo</label>
+            <input type="file" id="bg-file" accept="image/*">
+            <button type="button" id="btn-bg">Aplicar/Remover Imagem de Fundo</button>
+            <button type="button" id="btn-btl">Trocar Garrafa</button>
+            <button type="button" id="btn-tema">Inverter Cores</button>
+          </div>
+        </div>
+
+        <!-- ====================================================
+             📚 SUBMENU: POLÍTICAS
+             Links para documentos legais e repositório no GitHub.
              ==================================================== -->
         <div class="submenu">
           <button class="submenu-btn">Políticas</button>
           <div class="submenu-content">
-            <!-- Políticas legais do serviço -->
             <a href="policies/privacy.html" target="_blank" class="menu-link">Política de Privacidade</a>
             <a href="policies/service.html" target="_blank" class="menu-link">Termos de Serviço</a>
-            
-            <!-- Manual do usuário e informações sobre o projeto -->
-            <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">
-              README (GitHub)
-            </a>
-
-            <!-- Link para exclusão de conta (destaque em vermelho) -->
+            <a href="https://github.com/l4ss4r0t3/Hidrate.se/blob/main/README.md" target="_blank" class="menu-link">README (GitHub)</a>
             <a href="policies/deletion.html" target="_blank" class="menu-link" style="color: #ff4444;">Excluir Conta</a>
           </div>
         </div>
@@ -203,48 +189,64 @@
 
   <!-- ============================================================
        🧊 GARRAFA DE ÁGUA INTERATIVA (SVG)
-       Elemento visual principal que mostra o progresso de hidratação.
-       O arquivo SVG é carregado via <object> para permitir manipulação
-       via JavaScript dos elementos internos (água, texto).
+       Elemento visual principal — mostra o progresso de hidratação.
+       Carregado via <object> para permitir manipulação JavaScript
+       dos elementos internos (nível da água, textos).
+       Controlado por: bottles.js
        ============================================================ -->
   <main>
     <div class="garrafa">
-      <object 
-        id="svg-garrafa" 
-        data="images/svgs/bottles/two.svg" 
+      <object
+        id="svg-garrafa"
+        data="images/svgs/bottles/two.svg"
         type="image/svg+xml"
         aria-label="Garrafa de água mostrando progresso de hidratação">
       </object>
     </div>
   </main>
 
-  <div id="perfil">
-    <div class="conteudo-perfil">
-
+  <!-- ============================================================
+       👤 POPUP: PERFIL DO USUÁRIO
+       Exibe foto e nome do usuário logado via Google.
+       Aberto por: abrirPopup('perfil') — popups.js
+       ============================================================ -->
+  <div id="perfil" class="popup-overlay">
+    <div class="popup-modal">
       <h2>Perfil</h2>
       <img id="foto-perfil" src="images/svgs/buttons/x.svg" alt="Foto do perfil">
       <p id="nome-perfil"></p>
-
-      <button onclick="fecharPopup('perfil');" class="text-button">
-        Fechar
-      </button>
-
+      <button onclick="fecharPopup('perfil');" class="text-button">Fechar</button>
     </div>
   </div>
 
   <!-- ============================================================
-       💬 POPUP DE INTRODUÇÃO
-       Modal que explica o funcionamento do app na primeira visita.
-       Controlado por popups.js (exibe automaticamente uma vez).
+       📚 POPUP: HISTÓRICO DE CONSUMO
+       Exibe os últimos 7 dias de registros de hidratação.
+       Aberto por: abrirHistorico() — history.js
+       Fechado por: fecharHistorico() ou clique fora do modal
        ============================================================ -->
-  <div id="meu-popup">
-    <div class="conteudo">
+  <div id="historico-popup" class="popup-overlay">
+    <div class="popup-modal historico-modal">
+      <div class="historico-modal-header">
+        <h2>Histórico (7 dias)</h2>
+        <button onclick="fecharHistorico()">✕</button>
+      </div>
+      <div id="historico-lista"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       👋 POPUP: INTRODUÇÃO
+       Explica o funcionamento do app na primeira visita.
+       Exibido automaticamente uma vez — controlado por popups.js
+       ============================================================ -->
+  <div id="meu-popup" class="popup-overlay">
+    <div class="popup-modal">
       <h2>👋 Bem-vindo ao Hidrate.se!</h2>
-      
+
       <p>🚰 <strong>Sua garrafa de água digital</strong></p>
-      
       <p>Este app ajuda você a acompanhar o consumo de água ao longo do dia de forma visual e interativa.</p>
-      
+
       <h3>Como usar:</h3>
       <ul style="text-align: left;">
         <li>📊 <strong>Defina sua meta</strong> diária (padrão: 2000ml)</li>
@@ -253,39 +255,44 @@
         <li>🎉 Ao completar, você verá uma <strong>mensagem de celebração</strong></li>
         <li>🔄 Use "Encher Garrafa" para <strong>resetar</strong> no dia seguinte</li>
       </ul>
-      
+
       <p>🔐 <strong>Faça login com Google</strong> para salvar seu progresso na nuvem!</p><br>
-      
-      <button onclick="fecharPopup('meu-popup');" class="text-button">
-        Fechar
-      </button>
+
+      <button onclick="fecharPopup('meu-popup');" class="text-button">Fechar</button>
     </div>
   </div>
 
-  <div id="meu-popup2">
-    <div class="conteudo2">
-
+  <!-- ============================================================
+       🧮 POPUP: CALCULADORA DE META
+       Estima a meta diária com base no peso (35ml por kg).
+       Aberto por: abrirPopup('meu-popup2') — popups.js
+       ============================================================ -->
+  <div id="meu-popup2" class="popup-overlay">
+    <div class="popup-modal">
       <h2>Calculadora de Hidratação</h2>
       <p>Use esta calculadora para estimar sua necessidade diária de água com base no fator peso (35ml por kg).</p><br>
-      
-        <input type="number" id="peso-input" placeholder="Peso (kg):">
-      
-        <div class="calculadora">
-      <button id="calcular-btn">Calcular Meta Diária</button>
-      <button id="aplicar-meta-btn">Aplicar meta</button>
+
+      <input type="number" id="peso-input" placeholder="Peso (kg):">
+
+      <div class="calculadora">
+        <button id="calcular-btn">Calcular Meta Diária</button>
+        <button id="aplicar-meta-btn">Aplicar meta</button>
       </div>
 
-      <p id="resultado-calculo" style=" font-weight: bold; margin: 0;"></p>
+      <p id="resultado-calculo" style="font-weight: bold; margin: 0;"></p>
 
-      <p><b>ATENÇÂO:</b> Informamos que o resultado é uma estimativa baseada no seu peso. As necessidades reais de hidratação variam de pessoa para pessoa. Em caso de dúvidas ou condições médicas, consulte um especialista.</p>
+      <p><b>ATENÇÃO:</b> O resultado é uma estimativa baseada no seu peso. As necessidades reais de hidratação variam de pessoa para pessoa. Em caso de dúvidas ou condições médicas, consulte um especialista.</p>
 
-      <button onclick="fecharPopup('meu-popup2');" class="text-button">
-        Fechar
-      </button>
-
+      <button onclick="fecharPopup('meu-popup2');" class="text-button">Fechar</button>
     </div>
   </div>
 
+  <!-- ============================================================
+       🔥 FIREBASE — IMPORTMAP
+       Mapeia os módulos do Firebase para suas URLs na CDN.
+       Precisa estar inline no HTML (browsers não aceitam importmap
+       em arquivos externos).
+       ============================================================ -->
   <script type="importmap">
   {
     "imports": {
@@ -296,264 +303,29 @@
   }
   </script>
 
-<script>
-  // Detecta se está rodando no app Android
-  window.isAndroidApp = function() {
-    return typeof AndroidAuth !== 'undefined';
-  };
+  <!-- ============================================================
+       📦 SCRIPTS — ORDEM DE CARREGAMENTO
+       A ordem importa: cada script pode depender do anterior.
 
-  // Recebe autenticação do Android após login nativo
-  window.receiveAuthFromAndroid = function(token, email, uid) {
-    console.log('✅ Token recebido do Android:', { email, uid });
-    
-    // Salva token e dados do usuário
-    sessionStorage.setItem('androidAuthToken', token);
-    sessionStorage.setItem('androidAuthEmail', email);
-    sessionStorage.setItem('androidAuthUid', uid);
-    
-    // Dispara evento para o módulo Firebase processar
-    window.dispatchEvent(new CustomEvent('androidAuthReady', {
-      detail: { token, email, uid }
-    }));
-    
-    console.log('📱 Evento androidAuthReady disparado');
-  };
-
-  // Callback de erro do Android
-  window.onAndroidLoginFailed = function(message) {
-    console.error('❌ Falha no login Android:', message);
-    alert('Erro ao fazer login: ' + message);
-  };
-
-  // Callback de logout do Android
-  window.onAndroidLogout = function() {
-    console.log('🚪 Logout recebido do Android');
-    sessionStorage.clear();
-    localStorage.clear();
-    location.reload(); // Recarrega página no estado offline
-  };
-
-  console.log('📱 Android Bridge ativo. isAndroidApp:', window.isAndroidApp());
-</script>
-
-  <script type="module">
-    
-    import { initializeApp } from 'firebase/app';
-    import { 
-      getAuth, 
-      GoogleAuthProvider, 
-      signInWithPopup,
-      signInWithCredential,
-      signOut, 
-      onAuthStateChanged 
-    } from 'firebase/auth';
-    import { 
-      initializeFirestore,
-      persistentLocalCache,
-      persistentMultipleTabManager, 
-      doc, 
-      setDoc, 
-      updateDoc, 
-      onSnapshot, 
-      increment 
-    } from 'firebase/firestore';
-
-    import { firebaseConfig } from './scripts/config.js';
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    const db = initializeFirestore(app, {
-    localCache: persistentLocalCache({
-    tabManager: persistentMultipleTabManager()
-    })
-    });
-
-    const provider = new GoogleAuthProvider();
-
-    window.fazerLogin = async function() {
-      
-      if (window.isAndroidApp && window.isAndroidApp()) {
-        console.log('📱 Solicitando login via Android...');
-        AndroidAuth.requestLogin();
-        return;
-      }
-
-      try {
-        const resultado = await signInWithPopup(auth, provider);
-
-        const fotoPerfil = document.getElementById('foto-perfil');
-const nomePerfil = document.getElementById('nome-perfil');
-if (fotoPerfil) fotoPerfil.src = (user.photoURL || '').replace('s96-c', 's400-c');
-if (nomePerfil) nomePerfil.textContent = user.displayName;
-
-        console.log('✅ Login realizado com sucesso');
-      } catch (erro) {
-        console.error('❌ Erro no login:', erro);
-        alert('Erro ao fazer login. Tente novamente.');
-      }
-
-    };
-
-    window.fazerLogout = async function() {
-      if (window.isAndroidApp && window.isAndroidApp()) {
-        AndroidAuth.requestLogout();
-      }
-
-      try {
-        await signOut(auth);
-        console.log('👋 Logout realizado');
-      } catch (erro) {
-        console.error('❌ Erro no logout:', erro);
-      }
-    };
-
-    window.addEventListener('androidAuthReady', async (event) => {
-  const { token, email, uid } = event.detail;
-  
-  console.log('📱 Auth Android recebida');
-  
-  setTimeout(() => {
-    if (window.escutarUsuario) {
-      const userMock = { uid, email };
-      window.escutarUsuario(userMock);
-      
-      const btnAuth = document.getElementById('btn-auth');
-      if (btnAuth) {
-        btnAuth.textContent = "Sair (Google)";
-        btnAuth.onclick = window.fazerLogout;
-      }
-      
-      const authWarning = document.getElementById('auth-warning');
-      if (authWarning) authWarning.style.display = 'none';
-      
-      console.log('✅ Escutando Firestore do usuário');
-    }
-  }, 500);
-});
-    
-    let unsubscribe = null;
-
-    onAuthStateChanged(auth, (user) => {
-      const btnAuth = document.getElementById('btn-auth');
-      const authWarning = document.getElementById('auth-warning');
-   
-      if (unsubscribe) {
-        unsubscribe();
-        unsubscribe = null;
-      }
-   
-      if (user) {
-
-        const fotoPerfil = document.getElementById('foto-perfil');
-const nomePerfil = document.getElementById('nome-perfil');
-if (fotoPerfil) fotoPerfil.src = (user.photoURL || '').replace('s96-c', 's400-c');
-if (nomePerfil) nomePerfil.textContent = user.displayName;
-       
-        if (btnAuth) {
-          btnAuth.textContent = "Sair (Google)";
-          btnAuth.onclick = window.fazerLogout;
-        }
-   
-        if (authWarning) authWarning.style.display = 'none';
-        escutarUsuario(user);
-   
-      } else {
-        
-        if (btnAuth) {
-          btnAuth.textContent = "Login com Google";
-          btnAuth.onclick = window.fazerLogin;
-        }
-   
-        if (authWarning) authWarning.style.display = 'block';
-   
-        if (window.totalBebido > 0 || window.metaDiaria !== 2000) {
-          if (typeof window.salvarNoLocalStorage === 'function') {
-            window.salvarNoLocalStorage();
-            console.log('💾 Dados salvos no localStorage ao deslogar');
-          }
-        }
-   
-        if (typeof window.carregarDoLocalStorage === 'function') {
-          window.carregarDoLocalStorage();
-        }
-   
-        resetarEstado();
-      }
-    });
-
-    function escutarUsuario(user) {
-      const userRef = doc(db, "usuarios", user.uid);
-   
-      unsubscribe = onSnapshot(userRef, (docSnap) => {
-        if (docSnap.exists()) {
-          const dados = docSnap.data();
-          window.totalBebido = dados.totalBebido || 0;
-          window.metaDiaria = dados.metaDiaria || 2000;
-          atualizarUI();
-   
-        } else {
-          const dadosLocal = localStorage.getItem('hidratese_dados');
-          let dadosIniciais = {
-            totalBebido: 0,
-            metaDiaria: 2000
-          };
-   
-          if (dadosLocal) {
-            try {
-              const dadosParsed = JSON.parse(dadosLocal);
-              dadosIniciais = {
-                totalBebido: dadosParsed.totalBebido || 0,
-                metaDiaria: dadosParsed.metaDiaria || 2000
-              };
-              console.log('📤 Migrando dados do localStorage para Firebase:', dadosIniciais);
-            } catch (e) {
-              console.error('Erro ao migrar localStorage:', e);
-            }
-          }
-   
-          setDoc(userRef, dadosIniciais);
-          
-          if (typeof window.limparLocalStorage === 'function') {
-            window.limparLocalStorage();
-          }
-        }
-      });
-    }
-
-    function atualizarUI() {
-      if (typeof window.atualizarVisual === 'function') {
-        window.atualizarVisual();
-      }
-   
-      const inputMeta = document.getElementById('meta-input');
-      if (inputMeta) inputMeta.value = window.metaDiaria;
-    }
-
-    function resetarEstado() {
-      if (typeof window.atualizarVisual === 'function') {
-        window.atualizarVisual();
-      }
-      
-      const inputMeta = document.getElementById('meta-input');
-      if (inputMeta) inputMeta.value = window.metaDiaria;
-    }
-
-    window.db = db;
-    window.auth = auth;
-    window.updateDoc = updateDoc;
-    window.doc = doc;
-    window.increment = increment;
-    window.escutarUsuario = escutarUsuario;
-
-</script>
-
-
+       android.js    → bridge com o app Android nativo
+       firebase.js   → autenticação e Firestore (type="module")
+       sw_config.js  → configuração do Service Worker (PWA)
+       bottles.js    → garrafa SVG, estado global, localStorage
+       buttons.js    → menu dropdown e interações dos botões
+       history.js    → popup de histórico dos últimos 7 dias
+       popups.js     → lógica de abrir/fechar popups
+       reset.js      → reset diário automático à meia-noite
+       themes.js     → alternância de tema claro/escuro
+       ============================================================ -->
+  <script src="scripts/android.js"></script>
+  <script type="module" src="scripts/firebase.js"></script>
   <script src="scripts/sw_config.js"></script>
-  <script src="scripts/bottles.js"></script>  <!-- Manipulação da garrafa SVG -->
-  <script src="scripts/buttons.js"></script>  <!-- Controle dos botões e menu -->
-  <script src="scripts/popups.js"></script>   <!-- Lógica do popup -->
-  <script src="scripts/themes.js"></script>   <!-- Alternância de tema claro/escuro -->
+  <script src="scripts/bottles.js"></script>
+  <script src="scripts/buttons.js"></script>
+  <script src="scripts/history.js"></script>
+  <script src="scripts/popups.js"></script>
+  <script src="scripts/reset.js"></script>
+  <script src="scripts/themes.js"></script>
 
 </body>
 </html>
