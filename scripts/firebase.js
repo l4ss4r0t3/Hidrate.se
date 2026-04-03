@@ -44,11 +44,7 @@ import { initializeApp } from 'firebase/app';
 
       try {
         const resultado = await signInWithPopup(auth, provider);
-
-        const fotoPerfil = document.getElementById('foto-perfil');
-const nomePerfil = document.getElementById('nome-perfil');
-if (fotoPerfil) fotoPerfil.src = (user.photoURL || '').replace('s96-c', 's400-c');
-if (nomePerfil) nomePerfil.textContent = user.displayName;
+        const user = resultado.user;
 
         console.log('✅ Login realizado com sucesso');
       } catch (erro) {

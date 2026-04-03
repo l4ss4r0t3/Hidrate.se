@@ -230,13 +230,29 @@ localStorage.setItem(chave, JSON.stringify(registros));
 
 // Firebase (se online)
 if (user && navigator.onLine) {
+
+    // 🔹 1. Salva o REGISTRO individual
     const registroRef = window.doc(
         window.db,
         "usuarios", user.uid,
         "historico", hoje,
-        "registros", registroIndividual.timestamp // ID único
+        "registros", registroIndividual.timestamp
     );
+
     await window.setDoc(registroRef, registroIndividual);
+
+    // 🔹 2. Garante o RESUMO do dia
+    const diaRef = window.doc(
+        window.db,
+        "usuarios", user.uid,
+        "historico", hoje
+    );
+
+    await window.setDoc(diaRef, {
+        data: hoje,
+        totalBebido: window.totalBebido,
+        metaDiaria: window.metaDiaria
+    }, { merge: true });
 }
 
 });

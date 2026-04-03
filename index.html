@@ -215,6 +215,7 @@
       <h2>Perfil</h2>
       <img id="foto-perfil" src="images/svgs/buttons/x.svg" alt="Foto do perfil">
       <p id="nome-perfil"></p>
+      <button onclick="fecharPopup('perfil');" class="text-button">Fechar</button>
     </div>
   </div>
 
@@ -228,6 +229,7 @@
     <div class="popup-modal historico-modal">
       <div class="historico-modal-header">
         <h2>Histórico (7 dias)</h2>
+        <button onclick="fecharHistorico()">✕</button>
       </div>
       <div id="historico-lista"></div>
     </div>
@@ -255,6 +257,7 @@
       </ul>
 
       <p>🔐 <strong>Faça login com Google</strong> para salvar seu progresso na nuvem!</p><br>
+      <button onclick="fecharPopup('meu-popup');" class="text-button">Fechar</button>
     </div>
   </div>
 
