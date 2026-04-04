@@ -4,7 +4,8 @@
 // Este arquivo controla:
 // - Registro do Service Worker (sw.js)
 // - Verificação de atualizações a cada abertura do app
-// - Recarga automática quando uma nova versão assume o controle
+// - Recarga automática quando uma nova versão assume o controle,
+//   mas só se o usuário estiver inativo há mais de 30 segundos
 // =============================================================
 
 
@@ -37,18 +38,46 @@ if ('serviceWorker' in navigator) {
 
 // =============================================================
 // 🔄 RECARGA AUTOMÁTICA AO ATUALIZAR
-// Quando um novo Service Worker assume o controle (via claim),
-// a página é recarregada para garantir que o usuário está
-// sempre usando a versão mais recente do app.
-//
-// A flag 'refreshing' evita recargas em loop caso o evento
-// 'controllerchange' seja disparado mais de uma vez.
+// Quando um novo Service Worker assume o controle, recarrega
+// a página automaticamente — mas só se o usuário estiver
+// inativo há mais de 30 segundos, para não interromper
+// um registro de consumo em andamento.
 // =============================================================
 let refreshing = false;
+let ultimaAcao = Date.now();
+
+// Atualiza o timestamp a cada interação do usuário
+['click', 'touchstart', 'keydown', 'scroll'].forEach(evento => {
+    document.addEventListener(evento, () => {
+        ultimaAcao = Date.now();
+    });
+});
 
 navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!refreshing) {
+    if (refreshing) return;
+
+    const inativoPor    = Date.now() - ultimaAcao;
+    const limiteInativo = 30 * 1000; // 30 segundos
+
+    if (inativoPor >= limiteInativo) {
+        // ✅ Usuário inativo: recarrega silenciosamente
         refreshing = true;
+        console.log('🔄 Atualização aplicada (usuário inativo)');
         window.location.reload();
+
+    } else {
+        // ⏳ Usuário ativo: aguarda inatividade antes de recarregar
+        console.log('⏳ Atualização pendente, aguardando inatividade...');
+
+        const intervalo = setInterval(() => {
+            const inativoAgora = Date.now() - ultimaAcao;
+
+            if (inativoAgora >= limiteInativo) {
+                clearInterval(intervalo);
+                refreshing = true;
+                console.log('🔄 Atualização aplicada (usuário ficou inativo)');
+                window.location.reload();
+            }
+        }, 5000); // Verifica a cada 5 segundos
     }
 });
