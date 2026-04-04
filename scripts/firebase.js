@@ -35,6 +35,7 @@ import {
   getDoc,
   getDocs,
   collection,
+  deleteDoc,
   onSnapshot,
   increment
 } from 'firebase/firestore';
@@ -297,5 +298,6 @@ window.updateDoc  = updateDoc;
 window.getDoc     = getDoc;
 window.getDocs    = getDocs;
 window.collection = collection;
+window.deleteDoc = deleteDoc;
 window.increment  = increment;
 window.escutarUsuario = escutarUsuario;

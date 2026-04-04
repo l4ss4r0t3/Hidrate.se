@@ -8,12 +8,14 @@
 // - Eventos dos botões (Beber, Encher, Alterar Meta)
 // =============================================================
 
+
 // =============================================================
 // 📊 ESTADO GLOBAL DA APLICAÇÃO
-// Variáveis compartilhadas com o Firebase e localStorage
+// Variáveis compartilhadas com Firebase e localStorage
 // =============================================================
-window.totalBebido = 0;      // Quantidade de água consumida no dia (ml)
-window.metaDiaria = 2000;    // Meta de consumo diário (ml)
+window.totalBebido = 0;    // Quantidade de água consumida no dia (ml)
+window.metaDiaria  = 2000; // Meta de consumo diário (ml)
+
 
 // =============================================================
 // 💾 FUNÇÕES DE LOCALSTORAGE
@@ -21,35 +23,34 @@ window.metaDiaria = 2000;    // Meta de consumo diário (ml)
 // =============================================================
 
 /**
- * Carrega dados do localStorage ao iniciar a aplicação
- * Se não houver dados salvos, usa valores padrão
+ * Carrega dados do localStorage ao iniciar a aplicação.
+ * Se não houver dados salvos, mantém os valores padrão.
  */
 function carregarDoLocalStorage() {
     const dadosSalvos = localStorage.getItem('hidratese_dados');
-    
-    if (dadosSalvos) {
-        try {
-            const dados = JSON.parse(dadosSalvos);
-            window.totalBebido = dados.totalBebido || 0;
-            window.metaDiaria = dados.metaDiaria || 2000;
-            console.log('📦 Dados carregados do localStorage');
-        } catch (e) {
-            console.error('❌ Erro ao carregar localStorage:', e);
-        }
+    if (!dadosSalvos) return;
+
+    try {
+        const dados = JSON.parse(dadosSalvos);
+        window.totalBebido = dados.totalBebido || 0;
+        window.metaDiaria  = dados.metaDiaria  || 2000;
+        console.log('📦 Dados carregados do localStorage');
+    } catch (e) {
+        console.error('❌ Erro ao carregar localStorage:', e);
     }
 }
 
 /**
- * Salva dados no localStorage
- * Chamado sempre que houver mudança no modo offline
+ * Salva os dados atuais no localStorage.
+ * Chamado sempre que houver mudança no modo offline.
  */
 function salvarNoLocalStorage() {
     const dados = {
-        totalBebido: window.totalBebido,
-        metaDiaria: window.metaDiaria,
+        totalBebido:       window.totalBebido,
+        metaDiaria:        window.metaDiaria,
         ultimaAtualizacao: new Date().toISOString()
     };
-    
+
     try {
         localStorage.setItem('hidratese_dados', JSON.stringify(dados));
         console.log('💾 Dados salvos no localStorage');
@@ -59,13 +60,14 @@ function salvarNoLocalStorage() {
 }
 
 /**
- * Limpa dados do localStorage
- * Chamado ao fazer login (Firebase assume o controle)
+ * Limpa os dados do localStorage.
+ * Chamado ao fazer login — Firebase assume o controle.
  */
 function limparLocalStorage() {
     localStorage.removeItem('hidratese_dados');
     console.log('🧹 localStorage limpo (dados migrados para Firebase)');
 }
+
 
 // =============================================================
 // 🌐 SYNC OFFLINE → FIREBASE
@@ -74,7 +76,7 @@ function limparLocalStorage() {
 // =============================================================
 
 /**
- * Tenta sincronizar o localStorage com o Firebase ao voltar online
+ * Tenta sincronizar o localStorage com o Firebase ao voltar online.
  */
 async function sincronizarComFirebase() {
     const user = window.auth?.currentUser;
@@ -84,11 +86,11 @@ async function sincronizarComFirebase() {
     if (!dadosSalvos) return;
 
     try {
-        const dados = JSON.parse(dadosSalvos);
-        const userRef = window.doc(window.db, "usuarios", user.uid);
+        const dados   = JSON.parse(dadosSalvos);
+        const userRef = window.doc(window.db, 'usuarios', user.uid);
         await window.updateDoc(userRef, {
             totalBebido: dados.totalBebido,
-            metaDiaria: dados.metaDiaria
+            metaDiaria:  dados.metaDiaria
         });
         console.log('🔄 Dados sincronizados com Firebase ao voltar online');
     } catch (e) {
@@ -102,11 +104,12 @@ window.addEventListener('online', () => {
     sincronizarComFirebase();
 });
 
+
 // =============================================================
 // 🚀 CARREGAMENTO INICIAL
-// Tenta carregar dados salvos do localStorage
 // =============================================================
 carregarDoLocalStorage();
+
 
 // =============================================================
 // 🎯 REFERÊNCIAS AOS ELEMENTOS DO DOM
@@ -116,146 +119,131 @@ const inputMeta = document.getElementById('meta-input'); // Campo de meta diári
 const btnBeber  = document.getElementById('btn-beber');  // Botão "Beber Água"
 const btnZerar  = document.getElementById('btn-zerar');  // Botão "Encher Garrafa"
 
+
 // =============================================================
 // 🧊 MANIPULAÇÃO DO SVG DA GARRAFA
 // Aguarda o carregamento completo do SVG antes de manipulá-lo
 // =============================================================
 const myBottle = document.getElementById('svg-garrafa');
-myBottle.addEventListener('load', function() {
-    // Acessa o documento interno do SVG
-    const svgDoc = myBottle.contentDocument;
-    
-    // Busca o elemento de água dentro do SVG
+
+myBottle.addEventListener('load', function () {
+    const svgDoc       = myBottle.contentDocument;
     const elementoAgua = svgDoc.getElementById('agua-nivel');
 
-    // =============================================================
-    // 📏 CONSTANTES DO SVG
-    // Valores fixos que definem as dimensões da animação da água
-    // =============================================================
-    const ALTURA_MAX_SVG = 24;    // Altura máxima do retângulo de água (garrafa cheia)
-    const POSICAO_BASE_Y = 31;    // Posição Y da base da garrafa
+    // Dimensões fixas que definem a animação do nível de água
+    const ALTURA_MAX_SVG = 24; // Altura máxima do retângulo (garrafa cheia)
+    const POSICAO_BASE_Y = 31; // Posição Y da base da garrafa
 
-    // =============================================================
-    // 🎨 FUNÇÃO: ATUALIZAR VISUAL DA GARRAFA
-    // Recalcula o nível da água e atualiza o SVG e os textos
-    // Chamada sempre que totalBebido ou metaDiaria mudam
-    // =============================================================
-    window.atualizarVisual = function() {
-        // Calcula quantos ml ainda faltam para bater a meta (mínimo 0)
-        const restante = Math.max(window.metaDiaria - window.totalBebido, 0);
-
-        // Porcentagem de água restante (entre 0.0 e 1.0)
-        // 1.0 = garrafa cheia (meta não atingida)
-        // 0.0 = garrafa vazia (meta atingida)
+    // =========================================================
+    // 🎨 ATUALIZAR VISUAL DA GARRAFA
+    // Recalcula o nível da água e atualiza o SVG e os textos.
+    // Chamada sempre que totalBebido ou metaDiaria mudam.
+    // =========================================================
+    window.atualizarVisual = function () {
+        const restante    = Math.max(window.metaDiaria - window.totalBebido, 0);
         const porcentagem = Math.min(Math.max(restante / window.metaDiaria, 0), 1);
+        const novaAltura  = porcentagem * ALTURA_MAX_SVG;
+        const novoY       = POSICAO_BASE_Y - novaAltura;
 
-        // Calcula altura e posição Y do retângulo de água
-        const novaAltura = porcentagem * ALTURA_MAX_SVG;
-        const novoY = POSICAO_BASE_Y - novaAltura;
-
-        // Atualiza os atributos do retângulo SVG que representa a água
         if (elementoAgua) {
             elementoAgua.setAttribute('height', novaAltura);
             elementoAgua.setAttribute('y', novoY);
         }
 
-        // Referências aos elementos de texto do rótulo interno da garrafa
-        const txtIngerido  = svgDoc.getElementById('texto-ingerido');  // Linha superior
-        const txtMeta      = svgDoc.getElementById('texto-meta');      // Linha inferior
-        const linhaFracao  = svgDoc.getElementById('linha-fracao');    // Traço separador
+        const txtIngerido = svgDoc.getElementById('texto-ingerido');
+        const txtMeta     = svgDoc.getElementById('texto-meta');
+        const linhaFracao = svgDoc.getElementById('linha-fracao');
 
         if (txtIngerido && txtMeta) {
             if (porcentagem <= 0) {
-                // 🎉 META BATIDA: Exibe mensagem de celebração
+                // 🎉 Meta atingida
                 txtIngerido.textContent = 'Meta';
-                txtMeta.textContent = 'Batida! 🎉';
+                txtMeta.textContent     = 'Batida! 🎉';
                 if (linhaFracao) linhaFracao.style.display = 'none';
             } else {
-                // 📊 META EM ANDAMENTO: Exibe "restante / meta"
+                // 📊 Meta em andamento
                 txtIngerido.textContent = `${restante}ml`;
-                txtMeta.textContent = `${window.metaDiaria}ml`;
+                txtMeta.textContent     = `${window.metaDiaria}ml`;
                 if (linhaFracao) linhaFracao.style.display = 'block';
             }
         }
     };
-    
-    // Chama a atualização visual inicial após o SVG carregar
+
     window.atualizarVisual();
 });
 
+
 // =============================================================
 // 💧 EVENTO: BOTÃO "BEBER ÁGUA"
-// Registra consumo de água e salva no Firebase ou localStorage
+// Registra consumo de água e salva no Firebase ou localStorage.
+// Também persiste o registro individual no histórico do dia.
 // =============================================================
 btnBeber.addEventListener('click', async () => {
     const valor = parseFloat(inputMl.value) || 0;
-    const user = window.auth?.currentUser;
+    const user  = window.auth?.currentUser;
 
-    if (valor > 0) {
-        // 💾 Sempre salva no localStorage (backup offline)
-        window.totalBebido += valor;
-        salvarNoLocalStorage();
+    // Ignora cliques sem valor válido
+    if (valor <= 0) return;
 
-        if (user && navigator.onLine) {
-            // ✅ MODO ONLINE: Incremento atomico no Firestore
-            try {
-                const userRef = window.doc(window.db, "usuarios", user.uid);
-                await window.updateDoc(userRef, { 
-                    totalBebido: window.increment(valor) 
-                });
-            } catch (e) {
-                console.warn('⚠️ Firebase indisponivel, salvo so no localStorage:', e);
-                window.atualizarVisual();
-            }
-        } else {
-            // 📴 MODO OFFLINE: so localStorage (ja salvo acima)
+    // Atualiza estado global e persiste no localStorage
+    window.totalBebido += valor;
+    salvarNoLocalStorage();
+
+    // Monta o registro individual do gole
+    const hoje = new Date().toLocaleDateString('pt-BR');
+    const registroIndividual = {
+        quantidade: valor,
+        hora:       new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        timestamp:  new Date().toISOString()
+    };
+
+    // Salva o registro individual no localStorage
+    const chave     = `hidratese_registros_${hoje}`;
+    const registros = JSON.parse(localStorage.getItem(chave)) || [];
+    registros.push(registroIndividual);
+    localStorage.setItem(chave, JSON.stringify(registros));
+
+    if (user && navigator.onLine) {
+        try {
+            // ☁️ Incremento atômico do total no Firestore
+            const userRef = window.doc(window.db, 'usuarios', user.uid);
+            await window.updateDoc(userRef, {
+                totalBebido: window.increment(valor)
+            });
+
+            // ☁️ Salva o registro individual na subcoleção do dia
+            const registroRef = window.doc(
+                window.db,
+                'usuarios', user.uid,
+                'historico', hoje,
+                'registros', registroIndividual.timestamp
+            );
+            await window.setDoc(registroRef, registroIndividual);
+
+            // ☁️ Garante o documento resumo do dia (merge para não sobrescrever)
+            const diaRef = window.doc(
+                window.db,
+                'usuarios', user.uid,
+                'historico', hoje
+            );
+            await window.setDoc(diaRef, {
+                data:        hoje,
+                totalBebido: window.totalBebido,
+                metaDiaria:  window.metaDiaria
+            }, { merge: true });
+
+        } catch (e) {
+            console.warn('⚠️ Firebase indisponível, salvo só no localStorage:', e);
             window.atualizarVisual();
         }
-        
-        fecharMenuCelular();
+    } else {
+        // 📴 Offline: só localStorage (já salvo acima)
+        window.atualizarVisual();
     }
 
-    const registroIndividual = {
-    quantidade: valor,
-    hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-    timestamp: new Date().toISOString()
-};
-
-// localStorage
-const hoje = new Date().toLocaleDateString('pt-BR');
-const chave = `hidratese_registros_${hoje}`;
-const registros = JSON.parse(localStorage.getItem(chave)) || [];
-registros.push(registroIndividual);
-localStorage.setItem(chave, JSON.stringify(registros));
-
-// Firebase (se online)
-if (user && navigator.onLine) {
-
-    // 🔹 1. Salva o REGISTRO individual
-    const registroRef = window.doc(
-        window.db,
-        "usuarios", user.uid,
-        "historico", hoje,
-        "registros", registroIndividual.timestamp
-    );
-
-    await window.setDoc(registroRef, registroIndividual);
-
-    // 🔹 2. Garante o RESUMO do dia
-    const diaRef = window.doc(
-        window.db,
-        "usuarios", user.uid,
-        "historico", hoje
-    );
-
-    await window.setDoc(diaRef, {
-        data: hoje,
-        totalBebido: window.totalBebido,
-        metaDiaria: window.metaDiaria
-    }, { merge: true });
-}
-
+    fecharMenuCelular();
 });
+
 
 // =============================================================
 // 🎯 EVENTO: ALTERAR META DIÁRIA
@@ -264,72 +252,96 @@ if (user && navigator.onLine) {
 if (inputMeta) {
     inputMeta.addEventListener('change', async () => {
         const novaMeta = parseFloat(inputMeta.value) || 2000;
-        const user = window.auth?.currentUser;
+        const user     = window.auth?.currentUser;
 
-        if (novaMeta > 0) {
-            // 💾 Sempre salva no localStorage (backup offline)
-            window.metaDiaria = novaMeta;
-            salvarNoLocalStorage();
+        if (novaMeta <= 0) return;
 
-            if (user && navigator.onLine) {
-                // ✅ MODO ONLINE: Persiste a nova meta no Firestore
-                try {
-                    const userRef = window.doc(window.db, "usuarios", user.uid);
-                    await window.updateDoc(userRef, { 
-                        metaDiaria: novaMeta 
-                    });
-                } catch (e) {
-                    console.warn('⚠️ Firebase indisponivel, meta salva so no localStorage:', e);
-                }
+        // Atualiza estado global e persiste no localStorage
+        window.metaDiaria = novaMeta;
+        salvarNoLocalStorage();
+
+        if (user && navigator.onLine) {
+            try {
+                const userRef = window.doc(window.db, 'usuarios', user.uid);
+                await window.updateDoc(userRef, { metaDiaria: novaMeta });
+            } catch (e) {
+                console.warn('⚠️ Firebase indisponível, meta salva só no localStorage:', e);
             }
-
-            window.atualizarVisual();
         }
+
+        window.atualizarVisual();
     });
 }
 
+
 // =============================================================
 // 🔄 EVENTO: BOTÃO "ENCHER GARRAFA" (RESETAR CONSUMO)
-// Zera o totalBebido para iniciar um novo dia
+// Zera o totalBebido e apaga os registros do dia no histórico
+// tanto no Firebase quanto no localStorage
 // =============================================================
 btnZerar.addEventListener('click', async () => {
     const user = window.auth?.currentUser;
 
     // Confirmação antes de resetar (exceto no app Android)
-    let confirmar = true;
-    if (!(window.AndroidBridge)) {
-        confirmar = confirm('Deseja encher a garrafa novamente?');
-    }
+    const confirmar = window.AndroidBridge
+        ? true
+        : confirm('Deseja encher a garrafa novamente? Esta ação também apaga o histórico do dia!');
 
-    if (confirmar) {
-        // 💾 Sempre salva no localStorage (backup offline)
-        window.totalBebido = 0;
-        salvarNoLocalStorage();
+    if (!confirmar) return;
 
-        if (user && navigator.onLine) {
-            // ✅ MODO ONLINE: Zera o campo totalBebido no Firestore
-            try {
-                const userRef = window.doc(window.db, "usuarios", user.uid);
-                await window.updateDoc(userRef, { 
-                    totalBebido: 0 
-                });
-            } catch (e) {
-                console.warn('⚠️ Firebase indisponivel, zerado so no localStorage:', e);
-                window.atualizarVisual();
+    // Zera estado global e persiste no localStorage
+    window.totalBebido = 0;
+    salvarNoLocalStorage();
+
+    // Apaga os registros individuais do dia no localStorage
+    const hoje = new Date().toLocaleDateString('pt-BR');
+    localStorage.removeItem(`hidratese_registros_${hoje}`);
+
+    // Apaga o resumo do dia no histórico do localStorage
+    const historico          = JSON.parse(localStorage.getItem('hidratese_historico')) || [];
+    const historicoAtualizado = historico.filter(d => d.data !== hoje);
+    localStorage.setItem('hidratese_historico', JSON.stringify(historicoAtualizado));
+
+    if (user && navigator.onLine) {
+        try {
+            // ☁️ Apaga os registros individuais do dia no Firestore
+            const registrosRef = window.collection(
+                window.db,
+                'usuarios', user.uid,
+                'historico', hoje,
+                'registros'
+            );
+            const snapshot = await window.getDocs(registrosRef);
+            for (const docSnap of snapshot.docs) {
+                await window.deleteDoc(docSnap.ref);
             }
-        } else {
-            // 📴 MODO OFFLINE: so localStorage (ja salvo acima)
-            window.atualizarVisual();
+
+            // ☁️ Apaga o documento resumo do dia no Firestore
+            const diaRef = window.doc(
+                window.db,
+                'usuarios', user.uid,
+                'historico', hoje
+            );
+            await window.deleteDoc(diaRef);
+
+            // ☁️ Zera o totalBebido no documento do usuário
+            const userRef = window.doc(window.db, 'usuarios', user.uid);
+            await window.updateDoc(userRef, { totalBebido: 0 });
+
+        } catch (e) {
+            console.warn('⚠️ Firebase indisponível, zerado só no localStorage:', e);
         }
-        
-        fecharMenuCelular();
     }
+
+    window.atualizarVisual();
+    fecharMenuCelular();
 });
+
 
 // =============================================================
 // 🌍 EXPORTAÇÃO GLOBAL
-// Torna as funções acessíveis ao Firebase (index.html)
+// Torna as funções acessíveis aos outros scripts
 // =============================================================
 window.carregarDoLocalStorage = carregarDoLocalStorage;
-window.limparLocalStorage = limparLocalStorage;
-window.salvarNoLocalStorage = salvarNoLocalStorage;
+window.limparLocalStorage     = limparLocalStorage;
+window.salvarNoLocalStorage   = salvarNoLocalStorage;
