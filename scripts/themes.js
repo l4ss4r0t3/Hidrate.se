@@ -4,8 +4,6 @@
 // Este arquivo controla:
 // - Alternância entre tema claro e escuro (inverter cores)
 // - Imagem de fundo personalizada (upload + persistência)
-//   A imagem fica num pseudo-elemento ::after isolado do filtro
-//   de inversão, mantendo as cores originais no tema escuro.
 // - Troca da garrafa SVG entre os modelos disponíveis
 // =============================================================
 
@@ -38,21 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 🖼️ IMAGEM DE FUNDO PERSONALIZADA
     // Permite ao usuário escolher uma imagem local como fundo.
     // A imagem é convertida em base64 e salva no localStorage.
-    // Aplicada via CSS custom property (--bg-url) no body::after,
-    // mantendo-a fora do escopo do filtro de inversão do tema.
     // O mesmo botão aplica e remove o fundo.
     // =============================================================
-    const btnBg     = document.getElementById('btn-bg');
+    const btnBg    = document.getElementById('btn-bg');
     const fileInput = document.getElementById('bg-file');
 
-    // Aplica o fundo via CSS custom property no body::after
+    // Aplica a imagem de fundo no body via CSS inline
     function aplicarFundo(src) {
-        document.body.style.setProperty('--bg-url', `url("${src}")`);
+        document.body.style.backgroundImage    = `url("${src}")`;
+        document.body.style.backgroundSize     = 'cover';
+        document.body.style.backgroundPosition = 'center';
     }
 
-    // Remove o fundo e limpa o localStorage
+    // Remove a imagem de fundo e limpa o localStorage
     function removerFundo() {
-        document.body.style.removeProperty('--bg-url');
+        document.body.style.backgroundImage = 'none';
         localStorage.removeItem('bg-image');
         if (btnBg) btnBg.textContent = 'Aplicar Fundo';
         console.log('🖼️ Imagem de fundo removida');
@@ -69,7 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         btnBg.addEventListener('click', () => {
             const file     = fileInput.files[0];
-            const temFundo = !!document.body.style.getPropertyValue('--bg-url');
+            const temFundo = document.body.style.backgroundImage !== 'none'
+                          && document.body.style.backgroundImage !== '';
 
             if (file) {
                 // ✅ Arquivo selecionado: lê e aplica como fundo
@@ -85,12 +84,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 reader.readAsDataURL(file);
 
             } else if (temFundo) {
-                // ❌ Nenhum arquivo selecionado e fundo ativo: remove
+                // ❌ Nenhum arquivo e fundo ativo: remove o fundo
                 removerFundo();
             }
         });
 
-        // Aplica automaticamente ao selecionar o arquivo no input
+        // Aplica automaticamente ao selecionar o arquivo
         fileInput.addEventListener('change', () => btnBg.click());
     }
 
@@ -126,9 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
         atualizarSVG();
 
         btnBtl.addEventListener('click', () => {
-            // Avança para o próximo modelo em rotação circular
-            const indexAtual = ORDEM.indexOf(svgAtual);
-            svgAtual         = ORDEM[(indexAtual + 1) % ORDEM.length];
+            // Avança para o próximo modelo na ordem circular
+            const indexAtual  = ORDEM.indexOf(svgAtual);
+            svgAtual          = ORDEM[(indexAtual + 1) % ORDEM.length];
 
             atualizarSVG();
             localStorage.setItem('svg-garrafa', svgAtual);
