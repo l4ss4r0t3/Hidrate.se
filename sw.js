@@ -14,7 +14,7 @@
 // Altere o número ao fazer deploy para forçar atualização
 // em todos os dispositivos que já têm o app instalado.
 // =============================================================
-const CACHE_NAME = 'hidrate-se-v3.1.6';
+const CACHE_NAME = 'hidrate-se-v3.1.7';
 
 
 // =============================================================
