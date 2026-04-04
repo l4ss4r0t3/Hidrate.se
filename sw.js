@@ -14,7 +14,7 @@
 // Altere o número ao fazer deploy para forçar atualização
 // em todos os dispositivos que já têm o app instalado.
 // =============================================================
-const CACHE_NAME = 'hidrate-se-v3.1.7';
+const CACHE_NAME = 'hidrate-se-v3.1.8';
 
 
 // =============================================================
@@ -80,6 +80,11 @@ self.addEventListener('install', (event) => {
 // Estratégia: busca no cache primeiro, rede como fallback.
 // Recursos novos encontrados na rede são salvos dinamicamente
 // para estarem disponíveis offline na próxima visita.
+//
+// ⚠️ A verificação de type foi removida intencionalmente —
+// manter só status 200 permite cachear recursos de CDN externo
+// (ex: Firebase SDK em gstatic.com), que retornam type 'opaque'
+// e seriam ignorados pela checagem type === 'basic'.
 // =============================================================
 self.addEventListener('fetch', (event) => {
   event.respondWith(
@@ -93,13 +98,8 @@ self.addEventListener('fetch', (event) => {
       // 🌐 Cache miss: busca na rede
       return fetch(event.request).then((networkResponse) => {
 
-        // Só salva respostas válidas e do mesmo domínio (type: basic)
-        // Respostas opacas (CDN externo) ou com erro não são cacheadas
-        if (
-          !networkResponse ||
-          networkResponse.status !== 200 ||
-          networkResponse.type !== 'basic'
-        ) {
+        // Só salva respostas válidas (status 200)
+        if (!networkResponse || networkResponse.status !== 200) {
           return networkResponse;
         }
 
